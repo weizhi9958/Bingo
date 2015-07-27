@@ -9,14 +9,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nowRange" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvNowRange" />
+    </LinearLayout>
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp">
 
         <TableRow
             android:layout_width="match_parent"
@@ -29,7 +41,7 @@
                 android:text="0"
                 android:id="@+id/tvNum0"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#aa7586ff"
+                android:background="#dcffc643"
                 android:layout_margin="5dp" />
 
             <TextView
@@ -38,7 +50,7 @@
                 android:text="0"
                 android:id="@+id/tvNum1"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#aa7586ff"
+                android:background="#dcffc643"
                 android:layout_margin="5dp" />
 
             <TextView
@@ -47,7 +59,7 @@
                 android:text="0"
                 android:id="@+id/tvNum2"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#aa7586ff"
+                android:background="#dcffc643"
                 android:layout_margin="5dp" />
         </TableRow>
 
@@ -62,7 +74,7 @@
                 android:text="0"
                 android:id="@+id/tvNum3"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#aa7586ff"
+                android:background="#dcffc643"
                 android:layout_margin="5dp" />
 
             <TextView
@@ -71,7 +83,7 @@
                 android:text="0"
                 android:id="@+id/tvNum4"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#aa7586ff"
+                android:background="#dcffc643"
                 android:layout_margin="5dp" />
 
             <TextView
@@ -80,7 +92,7 @@
                 android:text="0"
                 android:id="@+id/tvNum5"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#aa7586ff"
+                android:background="#dcffc643"
                 android:layout_margin="5dp" />
         </TableRow>
 
@@ -95,7 +107,7 @@
                 android:text="0"
                 android:id="@+id/tvNum6"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#aa7586ff"
+                android:background="#dcffc643"
                 android:layout_margin="5dp" />
 
             <TextView
@@ -104,7 +116,7 @@
                 android:text="0"
                 android:id="@+id/tvNum7"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#aa7586ff"
+                android:background="#dcffc643"
                 android:layout_margin="5dp" />
 
             <TextView
@@ -113,7 +125,7 @@
                 android:text="0"
                 android:id="@+id/tvNum8"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#aa7586ff"
+                android:background="#dcffc643"
                 android:layout_margin="5dp" />
         </TableRow>
     </TableLayout>

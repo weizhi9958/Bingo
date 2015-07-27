@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">Bingo</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="bingoRange_title">請輸入賓果數字範圍</string>
+    <string name="bingoRange_min">最小值</string>
+    <string name="bingoRange_max">最大值</string>
+    <string name="dialogToast_Null">請輸入最小值及最大值</string>
+    <string name="dialogToast_Error">最小值及最大值輸入錯誤</string>
+
+    <string name="enter">確定</string>
+    <string name="cancel">取消</string>
+
+    <string name="nowRange">目前賓果範圍為：</string>
 </resources>
