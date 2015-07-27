@@ -1,0 +1,122 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="0"
+                android:id="@+id/tvNum0"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#aa7586ff"
+                android:layout_margin="5dp" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="0"
+                android:id="@+id/tvNum1"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#aa7586ff"
+                android:layout_margin="5dp" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="0"
+                android:id="@+id/tvNum2"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#aa7586ff"
+                android:layout_margin="5dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal" >
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="0"
+                android:id="@+id/tvNum3"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#aa7586ff"
+                android:layout_margin="5dp" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="0"
+                android:id="@+id/tvNum4"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#aa7586ff"
+                android:layout_margin="5dp" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="0"
+                android:id="@+id/tvNum5"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#aa7586ff"
+                android:layout_margin="5dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal" >
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="0"
+                android:id="@+id/tvNum6"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#aa7586ff"
+                android:layout_margin="5dp" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="0"
+                android:id="@+id/tvNum7"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#aa7586ff"
+                android:layout_margin="5dp" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="0"
+                android:id="@+id/tvNum8"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#aa7586ff"
+                android:layout_margin="5dp" />
+        </TableRow>
+    </TableLayout>
+
+
+</LinearLayout>
