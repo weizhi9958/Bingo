@@ -4,14 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,21 +16,29 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.annotation.Target;
-
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
+    String strRangeMin = null;
+    String strRangeMax = null;
+
+    int iWidth = 3;
+    int iLine = 0;
+
+    boolean bIsPlay = false;
+    boolean bIsLine[] = {false, false, false,
+            false, false, false,
+            false, false, false,};
+
     TextView tvNowRange;
-    TextView tvNumArray[] = new TextView[9];
-    Button btnRandom;
+    TextView tvNumArray[] = new TextView[iWidth * iWidth];
+    TextView tvLine;
     ImageView ivRangeEdit;
+    ImageView ivRandom;
+    ImageView ivMode;
     EditText etDialogMin;
     EditText etDialogMax;
     EditText etEtDialogNum;
-
-    String strRangeMin = null;
-    String strRangeMax = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +52,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void initView() {
         tvNowRange = (TextView) findViewById(R.id.tvNowRange);
-        btnRandom = (Button) findViewById(R.id.btnRandom);
+        tvLine = (TextView) findViewById(R.id.tvLine);
+        ivRandom = (ImageView) findViewById(R.id.ivRandom);
         ivRangeEdit = (ImageView) findViewById(R.id.ivRangeEdit);
+        ivMode = (ImageView) findViewById(R.id.ivMode);
 
-        btnRandom.setOnClickListener(this);
+        ivRandom.setOnClickListener(this);
         ivRangeEdit.setOnClickListener(this);
+        ivMode.setOnClickListener(this);
 
         String strTxtID = null;
         int iRegID = -1;
@@ -123,9 +131,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         });
     }
 
-    private void createEditNumDialog(TextView tvDialogNum, final String strEtDialogMin, final String strEtDialogMax) {
+    private void createEditNumDialog(final TextView tvDialogNum, final String strEtDialogMin, final String strEtDialogMax) {
         AlertDialog.Builder adbBuilder = new AlertDialog.Builder(MainActivity.this);
-        final View viewDialog = View.inflate(MainActivity.this, R.layout.dialog_editNum, null);
+        final View viewDialog = View.inflate(MainActivity.this, R.layout.dialog_editnum, null);
 
         adbBuilder.setView(viewDialog); //設置view來源為R.layout.dialog_range
         adbBuilder.setCancelable(false);
@@ -140,7 +148,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onShow(DialogInterface dialog) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(etDialogMin, InputMethodManager.SHOW_IMPLICIT);
+                imm.showSoftInput(etEtDialogNum, InputMethodManager.SHOW_IMPLICIT);
             }
         });
         alert.show();
@@ -149,15 +157,38 @@ public class MainActivity extends Activity implements View.OnClickListener {
         btnDialogEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int iEtDialogMin = Integer.parseInt(strEtDialogMin);
-                int iEtDialogMax = Integer.parseInt(strEtDialogMax);
-                int iEtDialogNum = Integer.parseInt(etEtDialogNum.getText().toString());
-                //如果皆有輸入值存入string變數 , 否則toast
-                if (!"".equals(etDialogMin.getText().toString()) && !"".equals(etDialogMax.getText().toString())) {
+                if (!"".equals(etEtDialogNum.getText().toString())) {
+                    int iEtDialogMin = Integer.parseInt(strEtDialogMin);
+                    int iEtDialogMax = Integer.parseInt(strEtDialogMax);
+                    int iEtDialogNum = Integer.parseInt(etEtDialogNum.getText().toString());
+                    //如果輸入值在範圍內
+                    if (iEtDialogNum >= iEtDialogMin && iEtDialogNum <= iEtDialogMax) {
+                        boolean bComp = false;
+                        for (int i = 0; i < tvNumArray.length; i++) {
+                            //非TextView陣列中的字
+                            if (!Integer.toString(iEtDialogNum).equals(tvNumArray[i].getText().toString())) {
+                                bComp = false;
+                                //是否為傳入的數字
+                            } else if (tvNumArray[i].getText().toString().equals(tvDialogNum.getText().toString())) {
+                                bComp = false;
+                            } else {
+                                bComp = true;
+                                break;
+                            }
+                        }
 
+                        if (bComp != true) {
+                            tvDialogNum.setText(etEtDialogNum.getText().toString());
+                            alert.dismiss();
+                        } else {
+                            Toast.makeText(MainActivity.this, R.string.dialogToast_EditNumComp, Toast.LENGTH_SHORT).show();
+                        }
 
+                    } else {
+                        Toast.makeText(MainActivity.this, getString(R.string.dialogToast_EditNumError) + tvNowRange.getText().toString(), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(MainActivity.this, R.string.dialogToast_Null, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.dialogToast_NumNull, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -190,25 +221,76 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    private void changeMode(boolean bChangePlay) {
+        int iModeColor = -1;
+        int iModeImage = -1;
+        if (bChangePlay == true) {
+            iModeColor = R.color.onPause;
+            iModeImage = R.drawable.play;
+        } else {
+            iModeColor = R.color.onPlay;
+            iModeImage = R.drawable.pause;
+        }
+        for (int i = 0; i < tvNumArray.length; i++) {
+            tvNumArray[i].setBackgroundResource(iModeColor);
+        }
+        for (int i = 0; i < bIsLine.length; i++) {
+            bIsLine[i] = false;
+        }
+        iLine = 0;
+        tvLine.setText("0");
+        ivRandom.setEnabled(bChangePlay);
+        ivRangeEdit.setEnabled(bChangePlay);
+        ivMode.setImageResource(iModeImage);
+        bIsPlay = !bChangePlay;
+    }
+
+    private void censorLine() {
+        iLine = 0;
+        int iStraight;
+        for (int i = 0; i < iWidth * iWidth; i += iWidth) {
+            iStraight = 0;
+            for (int j = i; j < i + iWidth; j++) {
+                if (bIsLine[j] == false) {
+                    iStraight--;
+                    continue;
+                }
+                iStraight++;
+            }
+            if (iWidth == iStraight) {
+                iLine++;
+            }
+        }
+        tvLine.setText(Integer.toString(iLine));
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ivRangeEdit:
                 createRangeDialog();
                 break;
-            case R.id.btnRandom:
+            case R.id.ivRandom:
                 createRandom(Integer.parseInt(strRangeMin), Integer.parseInt(strRangeMax));
+                break;
+            case R.id.ivMode:
+                changeMode(bIsPlay);
                 break;
         }
 
         for (int i = 0; i < tvNumArray.length; i++) {
-
             if (v.getId() == tvNumArray[i].getId()) {
-                createEditNumDialog(tvNumArray[0], strRangeMin, strRangeMax);
+                //判斷遊戲模式, 遊戲中為更改顏色, 非遊戲中為彈出輸入視窗
+                if (bIsPlay == true) {
+                    bIsLine[i] = true;
+                    censorLine();
+                    tvNumArray[i].setBackgroundResource(R.color.clickTextView);
+                } else {
+                    createEditNumDialog(tvNumArray[i], strRangeMin, strRangeMax);
+                }
             }
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

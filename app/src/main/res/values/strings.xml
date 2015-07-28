@@ -4,15 +4,19 @@
     <string name="bingoRange_title">輸入賓果數字範圍</string>
     <string name="bingoRange_min">最小值</string>
     <string name="bingoRange_max">最大值</string>
+    <string name="bingoNum_title">輸入範圍內數字</string>
+    <string name="bingoNum_hint">數字</string>
+
     <string name="dialogToast_Null">請輸入最小值及最大值</string>
     <string name="dialogToast_Error">最小值及最大值輸入錯誤</string>
     <string name="dialogToast_lengthError">範圍數量必須超過 9</string>
-
-    <string name="bingoNum_title">輸入範圍內數字</string>
-    <string name="bingoNum_hint">數字</string>
+    <string name="dialogToast_EditNumError">數值範圍須 </string>
+    <string name="dialogToast_EditNumComp">已有相同數字</string>
+    <string name="dialogToast_NumNull">請輸入數字</string>
 
     <string name="enter">確定</string>
     <string name="cancel">取消</string>
 
     <string name="nowRange">目前賓果範圍為：</string>
+    <string name="nowLine"> 連線</string>
 </resources>

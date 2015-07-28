@@ -12,30 +12,72 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/nowRange" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvNowRange" />
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/ivRangeEdit"
-            android:background="@android:drawable/ic_menu_edit" />
+            android:layout_marginRight="30dp"
+            android:src="@drawable/edit" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/ivRandom"
+            android:layout_marginRight="30dp"
+            android:src="@drawable/dice" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/ivMode"
+            android:src="@drawable/play" />
+
     </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="亂數"
-        android:id="@+id/btnRandom" />
+        android:gravity="center_horizontal"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nowRange"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvNowRange"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="16dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvLine"
+            android:textSize="20sp"
+            android:text="0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nowLine"
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <TableLayout
         android:layout_width="match_parent"
@@ -53,8 +95,10 @@
                 android:text="0"
                 android:id="@+id/tvNum0"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#dcffc643"
-                android:layout_margin="5dp" />
+                android:background="@color/onPause"
+                android:layout_margin="5dp"
+                android:textColor="@color/txtNum"
+                android:textSize="25sp" />
 
             <TextView
                 android:layout_width="80dp"
@@ -62,8 +106,10 @@
                 android:text="0"
                 android:id="@+id/tvNum1"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#dcffc643"
-                android:layout_margin="5dp" />
+                android:background="@color/onPause"
+                android:layout_margin="5dp"
+                android:textSize="25sp"
+                android:textColor="@color/txtNum" />
 
             <TextView
                 android:layout_width="80dp"
@@ -71,8 +117,10 @@
                 android:text="0"
                 android:id="@+id/tvNum2"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#dcffc643"
-                android:layout_margin="5dp" />
+                android:background="@color/onPause"
+                android:layout_margin="5dp"
+                android:textSize="25sp"
+                android:textColor="@color/txtNum" />
         </TableRow>
 
         <TableRow
@@ -86,8 +134,10 @@
                 android:text="0"
                 android:id="@+id/tvNum3"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#dcffc643"
-                android:layout_margin="5dp" />
+                android:background="@color/onPause"
+                android:layout_margin="5dp"
+                android:textSize="25sp"
+                android:textColor="@color/txtNum" />
 
             <TextView
                 android:layout_width="80dp"
@@ -95,8 +145,10 @@
                 android:text="0"
                 android:id="@+id/tvNum4"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#dcffc643"
-                android:layout_margin="5dp" />
+                android:background="@color/onPause"
+                android:layout_margin="5dp"
+                android:textSize="25sp"
+                android:textColor="@color/txtNum" />
 
             <TextView
                 android:layout_width="80dp"
@@ -104,8 +156,10 @@
                 android:text="0"
                 android:id="@+id/tvNum5"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#dcffc643"
-                android:layout_margin="5dp" />
+                android:background="@color/onPause"
+                android:layout_margin="5dp"
+                android:textSize="25sp"
+                android:textColor="@color/txtNum" />
         </TableRow>
 
         <TableRow
@@ -119,8 +173,10 @@
                 android:text="0"
                 android:id="@+id/tvNum6"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#dcffc643"
-                android:layout_margin="5dp" />
+                android:background="@color/onPause"
+                android:layout_margin="5dp"
+                android:textSize="25sp"
+                android:textColor="@color/txtNum" />
 
             <TextView
                 android:layout_width="80dp"
@@ -128,8 +184,10 @@
                 android:text="0"
                 android:id="@+id/tvNum7"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#dcffc643"
-                android:layout_margin="5dp" />
+                android:background="@color/onPause"
+                android:layout_margin="5dp"
+                android:textSize="25sp"
+                android:textColor="@color/txtNum" />
 
             <TextView
                 android:layout_width="80dp"
@@ -137,8 +195,10 @@
                 android:text="0"
                 android:id="@+id/tvNum8"
                 android:gravity="center_vertical|center_horizontal"
-                android:background="#dcffc643"
-                android:layout_margin="5dp" />
+                android:background="@color/onPause"
+                android:layout_margin="5dp"
+                android:textSize="25sp"
+                android:textColor="@color/txtNum" />
         </TableRow>
     </TableLayout>
 
