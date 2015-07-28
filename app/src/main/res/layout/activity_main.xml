@@ -23,7 +23,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tvNowRange" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ivRangeEdit"
+            android:background="@android:drawable/ic_menu_edit" />
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="亂數"
+        android:id="@+id/btnRandom" />
 
     <TableLayout
         android:layout_width="match_parent"
