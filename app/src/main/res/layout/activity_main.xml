@@ -1,206 +1,226 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/ivRangeEdit"
-            android:layout_marginRight="30dp"
-            android:src="@drawable/edit" />
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/ivRandom"
-            android:layout_marginRight="30dp"
-            android:src="@drawable/dice" />
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/ivMode"
-            android:src="@drawable/play" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/nowRange"
-            android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvNowRange"
-            android:textSize="20sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="16dp" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvLine"
-            android:textSize="20sp"
-            android:text="0" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/nowLine"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp">
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-        <TableRow
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:text="0"
-                android:id="@+id/tvNum0"
-                android:gravity="center_vertical|center_horizontal"
-                android:background="@color/onPause"
-                android:layout_margin="5dp"
-                android:textColor="@color/txtNum"
-                android:textSize="25sp" />
+            <ImageView
+                android:id="@+id/ivRangeEdit"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="30dp"
+                android:src="@drawable/edit" />
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:text="0"
-                android:id="@+id/tvNum1"
-                android:gravity="center_vertical|center_horizontal"
-                android:background="@color/onPause"
-                android:layout_margin="5dp"
-                android:textSize="25sp"
-                android:textColor="@color/txtNum" />
+            <ImageView
+                android:id="@+id/ivRandom"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="30dp"
+                android:src="@drawable/dice" />
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:text="0"
-                android:id="@+id/tvNum2"
-                android:gravity="center_vertical|center_horizontal"
-                android:background="@color/onPause"
-                android:layout_margin="5dp"
-                android:textSize="25sp"
-                android:textColor="@color/txtNum" />
-        </TableRow>
+            <ImageView
+                android:id="@+id/ivMode"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/play" />
 
-        <TableRow
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal" >
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:text="0"
-                android:id="@+id/tvNum3"
-                android:gravity="center_vertical|center_horizontal"
-                android:background="@color/onPause"
-                android:layout_margin="5dp"
-                android:textSize="25sp"
-                android:textColor="@color/txtNum" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nowRange"
+                android:textSize="20sp" />
 
             <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:text="0"
-                android:id="@+id/tvNum4"
-                android:gravity="center_vertical|center_horizontal"
-                android:background="@color/onPause"
-                android:layout_margin="5dp"
-                android:textSize="25sp"
-                android:textColor="@color/txtNum" />
+                android:id="@+id/tvNowRange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp" />
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:text="0"
-                android:id="@+id/tvNum5"
-                android:gravity="center_vertical|center_horizontal"
-                android:background="@color/onPause"
-                android:layout_margin="5dp"
-                android:textSize="25sp"
-                android:textColor="@color/txtNum" />
-        </TableRow>
+        </LinearLayout>
 
-        <TableRow
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal" >
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:id="@+id/tvLine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="0"
-                android:id="@+id/tvNum6"
-                android:gravity="center_vertical|center_horizontal"
-                android:background="@color/onPause"
-                android:layout_margin="5dp"
-                android:textSize="25sp"
-                android:textColor="@color/txtNum" />
+                android:textSize="20sp" />
 
             <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:text="0"
-                android:id="@+id/tvNum7"
-                android:gravity="center_vertical|center_horizontal"
-                android:background="@color/onPause"
-                android:layout_margin="5dp"
-                android:textSize="25sp"
-                android:textColor="@color/txtNum" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nowLine"
+                android:textSize="20sp" />
+        </LinearLayout>
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:text="0"
-                android:id="@+id/tvNum8"
-                android:gravity="center_vertical|center_horizontal"
-                android:background="@color/onPause"
-                android:layout_margin="5dp"
-                android:textSize="25sp"
-                android:textColor="@color/txtNum" />
-        </TableRow>
-    </TableLayout>
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:stretchColumns="*">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/tvNum0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/onPause"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/txtNum"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/tvNum1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/onPause"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/txtNum"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/tvNum2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/onPause"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/txtNum"
+                    android:textSize="25sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/tvNum3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/onPause"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/txtNum"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/tvNum4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/onPause"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/txtNum"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/tvNum5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/onPause"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/txtNum"
+                    android:textSize="25sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/tvNum6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/onPause"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/txtNum"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/tvNum7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/onPause"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/txtNum"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/tvNum8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/onPause"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/txtNum"
+                    android:textSize="25sp" />
+
+            </TableRow>
+
+        </TableLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivCanves"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
 
 
-</LinearLayout>
+</FrameLayout>

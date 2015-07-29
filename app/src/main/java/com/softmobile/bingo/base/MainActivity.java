@@ -4,11 +4,19 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,12 +41,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
     TextView tvNowRange;
     TextView tvNumArray[] = new TextView[iWidth * iWidth];
     TextView tvLine;
+
     ImageView ivRangeEdit;
     ImageView ivRandom;
     ImageView ivMode;
+    ImageView ivCanvas;
+
     EditText etDialogMin;
     EditText etDialogMax;
     EditText etEtDialogNum;
+
+    Bitmap bmBitmap;
+    Paint pPaint;
+    Canvas cCanvas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +62,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         initView();
         createRangeDialog();
-
     }
 
     private void initView() {
@@ -56,6 +70,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ivRandom = (ImageView) findViewById(R.id.ivRandom);
         ivRangeEdit = (ImageView) findViewById(R.id.ivRangeEdit);
         ivMode = (ImageView) findViewById(R.id.ivMode);
+        ivCanvas = (ImageView) findViewById(R.id.ivCanves);
 
         ivRandom.setOnClickListener(this);
         ivRangeEdit.setOnClickListener(this);
@@ -73,6 +88,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
             tvNumArray[i] = (TextView) findViewById(iRegID);
             tvNumArray[i].setOnClickListener(this);
         }
+
+        //取得螢幕長寬
+        WindowManager manager = getWindowManager();
+        Display display = manager.getDefaultDisplay();
+        int screenWidth = display.getWidth();
+        int screenHeight = display.getHeight();
+
+        pPaint = new Paint(); //新增畫筆
+
+        pPaint.setStrokeWidth(15);//筆寬
+        pPaint.setColor(Color.parseColor("#FF7E74FF"));//筆色
+
+        bmBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888); //設置點陣圖的寬高,bitmap為透明
+        cCanvas = new Canvas(bmBitmap);
+        cCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);//設置為透明，畫布也是透明
     }
 
     private void createRangeDialog() {
@@ -255,6 +285,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ivRangeEdit.setImageResource(iModeRangeImage);
         ivMode.setImageResource(iModeImage);
         bIsPlay = !bChangePlay;
+
+        Paint p = new Paint();
+        //清屏
+        p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        cCanvas.drawPaint(p);
+        p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
     }
 
     private void censorAllTvEdit() {
@@ -266,7 +302,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if ((iTvTxt >= iMin && iTvTxt <= iMax) == false) {
                 break;
             }
-            if(i == tvNumArray.length -1){
+            if (i == tvNumArray.length - 1) {
                 ivMode.setEnabled(true);
                 ivMode.setImageResource(R.drawable.play);
             }
@@ -276,29 +312,38 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void censorLine() {
         iLine = 0;
         int iPoint;
-        //直向連線數
+        int iLineArray[] = new int[iWidth];
+        //橫向連線數
         for (int i = 0; i < iWidth * iWidth; i += iWidth) {
             iPoint = 0;
             for (int j = i; j < i + iWidth; j++) {
                 if (bIsLine[j] == false) {
                     continue;
                 }
+                //將連線TextView存入陣列
+                iLineArray[iPoint] = j;
                 iPoint++;
             }
+            //如果點擊數=3
             if (iWidth == iPoint) {
+                //畫線
+                drawLine(iLineArray);
                 iLine++;
             }
         }
-        //橫向連線數
+        //直向連線數
         for (int i = 0; i < iWidth; i++) {
             iPoint = 0;
             for (int j = i; j < iWidth * iWidth; j += iWidth) {
                 if (bIsLine[j] == false) {
                     continue;
                 }
+                //將連線TextView存入陣列
+                iLineArray[iPoint] = j;
                 iPoint++;
             }
             if (iWidth == iPoint) {
+                drawLine(iLineArray);
                 iLine++;
             }
         }
@@ -308,8 +353,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if (bIsLine[i] == false) {
                 continue;
             }
+            //將連線TextView存入陣列
+            iLineArray[iPoint] = i;
             iPoint++;
             if (iWidth == iPoint) {
+                drawLine(iLineArray);
                 iLine++;
             }
         }
@@ -319,12 +367,31 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if (bIsLine[i] == false) {
                 continue;
             }
+            //將連線TextView存入陣列
+            iLineArray[iPoint] = i;
             iPoint++;
             if (iWidth == iPoint) {
+                drawLine(iLineArray);
                 iLine++;
             }
         }
         tvLine.setText(Integer.toString(iLine));
+    }
+
+    private void drawLine(int iDwLine[]) {
+        int[] iStart = new int[2];
+        int[] iEnd = new int[2];
+        //取得起始和終止物件的座標
+        tvNumArray[iDwLine[0]].getLocationOnScreen(iStart);
+        tvNumArray[iDwLine[2]].getLocationOnScreen(iEnd);
+        //計算座標
+        int iStrartX = iStart[0] + (tvNumArray[iDwLine[0]].getMeasuredWidth() / 2);
+        int iStrartY = iStart[1] + (tvNumArray[iDwLine[0]].getMeasuredHeight() / 2);
+        int iEndX = iEnd[0] + (tvNumArray[iDwLine[2]].getMeasuredWidth() / 2);
+        int iEndY = iEnd[1] + (tvNumArray[iDwLine[2]].getMeasuredHeight() /2);
+        //畫線
+        cCanvas.drawLine(iStrartX, iStrartY, iEndX, iEndY, pPaint);
+        ivCanvas.setImageBitmap(bmBitmap);
     }
 
     @Override
@@ -359,7 +426,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+       // getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -368,13 +435,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        /*
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
+        */
         return super.onOptionsItemSelected(item);
     }
 

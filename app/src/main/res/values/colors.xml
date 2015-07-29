@@ -2,6 +2,6 @@
 <resources>
     <color name="onPlay">#FFFAA100</color>
     <color name="onPause">#FFFFBB33</color>
-    <color name="clickTextView">#FFC31900</color>
+    <color name="clickTextView">#FFC3503C</color>
     <color name="txtNum">#FFFFFF</color>
 </resources>
