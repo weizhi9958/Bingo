@@ -61,6 +61,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ivRangeEdit.setOnClickListener(this);
         ivMode.setOnClickListener(this);
 
+        ivMode.setEnabled(false);
+        ivMode.setImageResource(R.drawable.playoff);
+
         String strTxtID = null;
         int iRegID = -1;
         for (int i = 0; i < tvNumArray.length; i++) {
@@ -180,6 +183,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         if (bComp != true) {
                             tvDialogNum.setText(etEtDialogNum.getText().toString());
                             alert.dismiss();
+                            censorAllTvEdit();
                         } else {
                             Toast.makeText(MainActivity.this, R.string.dialogToast_EditNumComp, Toast.LENGTH_SHORT).show();
                         }
@@ -224,12 +228,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void changeMode(boolean bChangePlay) {
         int iModeColor = -1;
         int iModeImage = -1;
+        int iModeRangeImage = -1;
+        int iModeRandomImage = -1;
         if (bChangePlay == true) {
             iModeColor = R.color.onPause;
             iModeImage = R.drawable.play;
+            iModeRangeImage = R.drawable.edit;
+            iModeRandomImage = R.drawable.dice;
         } else {
             iModeColor = R.color.onPlay;
             iModeImage = R.drawable.pause;
+            iModeRangeImage = R.drawable.editoff;
+            iModeRandomImage = R.drawable.diceoff;
         }
         for (int i = 0; i < tvNumArray.length; i++) {
             tvNumArray[i].setBackgroundResource(iModeColor);
@@ -240,24 +250,77 @@ public class MainActivity extends Activity implements View.OnClickListener {
         iLine = 0;
         tvLine.setText("0");
         ivRandom.setEnabled(bChangePlay);
+        ivRandom.setImageResource(iModeRandomImage);
         ivRangeEdit.setEnabled(bChangePlay);
+        ivRangeEdit.setImageResource(iModeRangeImage);
         ivMode.setImageResource(iModeImage);
         bIsPlay = !bChangePlay;
     }
 
+    private void censorAllTvEdit() {
+        int iTvTxt;
+        int iMin = Integer.parseInt(strRangeMin);
+        int iMax = Integer.parseInt(strRangeMax);
+        for (int i = 0; i < tvNumArray.length; i++) {
+            iTvTxt = Integer.parseInt(tvNumArray[i].getText().toString());
+            if ((iTvTxt >= iMin && iTvTxt <= iMax) == false) {
+                break;
+            }
+            if(i == tvNumArray.length -1){
+                ivMode.setEnabled(true);
+                ivMode.setImageResource(R.drawable.play);
+            }
+        }
+    }
+
     private void censorLine() {
         iLine = 0;
-        int iStraight;
+        int iPoint;
+        //直向連線數
         for (int i = 0; i < iWidth * iWidth; i += iWidth) {
-            iStraight = 0;
+            iPoint = 0;
             for (int j = i; j < i + iWidth; j++) {
                 if (bIsLine[j] == false) {
-                    iStraight--;
                     continue;
                 }
-                iStraight++;
+                iPoint++;
             }
-            if (iWidth == iStraight) {
+            if (iWidth == iPoint) {
+                iLine++;
+            }
+        }
+        //橫向連線數
+        for (int i = 0; i < iWidth; i++) {
+            iPoint = 0;
+            for (int j = i; j < iWidth * iWidth; j += iWidth) {
+                if (bIsLine[j] == false) {
+                    continue;
+                }
+                iPoint++;
+            }
+            if (iWidth == iPoint) {
+                iLine++;
+            }
+        }
+        //左上至右下
+        iPoint = 0;
+        for (int i = 0; i < iWidth * iWidth; i += (iWidth + 1)) {
+            if (bIsLine[i] == false) {
+                continue;
+            }
+            iPoint++;
+            if (iWidth == iPoint) {
+                iLine++;
+            }
+        }
+        //右上至左下
+        iPoint = 0;
+        for (int i = iWidth - 1; i <= (iWidth * iWidth) - iWidth; i += (iWidth - 1)) {
+            if (bIsLine[i] == false) {
+                continue;
+            }
+            iPoint++;
+            if (iWidth == iPoint) {
                 iLine++;
             }
         }
@@ -272,6 +335,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.ivRandom:
                 createRandom(Integer.parseInt(strRangeMin), Integer.parseInt(strRangeMax));
+                censorAllTvEdit();
                 break;
             case R.id.ivMode:
                 changeMode(bIsPlay);
@@ -280,7 +344,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         for (int i = 0; i < tvNumArray.length; i++) {
             if (v.getId() == tvNumArray[i].getId()) {
-                //判斷遊戲模式, 遊戲中為更改顏色, 非遊戲中為彈出輸入視窗
+                //判斷遊戲模式, 遊戲中為更改顏色及判斷連線, 非遊戲中為彈出輸入視窗
                 if (bIsPlay == true) {
                     bIsLine[i] = true;
                     censorLine();
