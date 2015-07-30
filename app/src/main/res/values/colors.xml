@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="onPlay">#FFFAA100</color>
-    <color name="onPause">#FFFFBB33</color>
-    <color name="clickTextView">#FFC3503C</color>
+    <color name="onPlay">#FFFFB22F</color>
+    <color name="onPause">#FFFFC003</color>
+    <color name="clickTextView">#FFFA8021</color>
     <color name="txtNum">#FFFFFF</color>
 </resources>

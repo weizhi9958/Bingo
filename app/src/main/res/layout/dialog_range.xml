@@ -39,10 +39,25 @@
         android:hint="@string/bingoRange_min"
         android:inputType="number"
         android:selectAllOnFocus="true"
-        android:focusableInTouchMode="true" />
+        android:focusableInTouchMode="true"
+        android:maxLength="4" />
 
     <EditText
         android:id="@+id/etRangeMax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="4dp"
+        android:ems="10"
+        android:hint="@string/bingoRange_max"
+        android:inputType="number"
+        android:selectAllOnFocus="true"
+        android:maxLength="4" />
+
+    <EditText
+        android:id="@+id/etWinLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -50,8 +65,11 @@
         android:layout_marginRight="4dp"
         android:layout_marginTop="4dp"
         android:ems="10"
-        android:hint="@string/bingoRange_max"
+        android:focusable="true"
+        android:hint="@string/bingoWinLine_hint"
         android:inputType="number"
-        android:selectAllOnFocus="true" />
+        android:selectAllOnFocus="true"
+        android:focusableInTouchMode="true"
+        android:maxLength="2" />
 
 </LinearLayout>

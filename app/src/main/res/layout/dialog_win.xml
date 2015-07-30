@@ -21,25 +21,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="15dp"
-            android:text="@string/bingoNum_title"
+            android:text="@string/bingoWin_title"
             android:textColor="#ffffffff"
             android:textSize="25sp" />
     </FrameLayout>
 
-    <EditText
-        android:id="@+id/etNum"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
+        android:text="@string/bingoWin_text"
+        android:id="@+id/textView2"
+        android:textColor="@color/onPlay"
+        android:textSize="25sp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:ems="10"
-        android:focusable="true"
-        android:hint="@string/bingoNum_hint"
-        android:inputType="number"
-        android:selectAllOnFocus="true"
-        android:focusableInTouchMode="true"
-        android:maxLength="4" />
+        android:layout_marginBottom="16dp" />
 
 </LinearLayout>
