@@ -13,17 +13,26 @@ import android.graphics.PorterDuffXfermode;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.SimpleAdapter;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -34,12 +43,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     int iWidth = 3;
     int iLine = 0;
-    int iTxtViewWidth = 0;
 
     boolean bIsPlay = false;
-    boolean bIsLine[] = {false, false, false,
-            false, false, false,
-            false, false, false,};
+    boolean bIsLine[] = new boolean[iWidth * iWidth];
+
+    TableLayout tbLayout;
+    GridView gvBingoMain;
+    ArrayList<HashMap<String,String>> alData;
 
     TextView tvNowRange;
     TextView tvNumArray[] = new TextView[iWidth * iWidth];
@@ -104,6 +114,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ivRangeEdit = (ImageView) findViewById(R.id.ivRangeEdit);
         ivMode      = (ImageView) findViewById(R.id.ivMode);
         ivCanvas    = (ImageView) findViewById(R.id.ivCanves);
+        tbLayout    = (TableLayout) findViewById(R.id.tbLayout);
+        gvBingoMain = (GridView) findViewById(R.id.gvBingoMain);
 
         ivRandom.setOnClickListener(this);
         ivRangeEdit.setOnClickListener(this);
@@ -112,18 +124,42 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ivMode.setEnabled(false);
         ivMode.setImageResource(R.drawable.playoff);
 
-        String strTxtID = null;
-        int iRegID = -1;
+/*
+        alData = new ArrayList<HashMap<String, String>>();
+        for(int i = 0; i < tvNumArray.length; i++){
+            HashMap<String,String> hmItem = new HashMap<String,String>();
+            hmItem.put("text", "0");
+            alData.add(hmItem);
+        }
+        SimpleAdapter spadp = new SimpleAdapter(this,alData,R.layout.gridview_bingomain,new String[]{"text"},new int[]{R.id.tvOnGridNum});
+        gvBingoMain.setNumColumns(iWidth);
+        gvBingoMain.setAdapter(spadp);
 
-        //註冊9個TextView物件
-        for (int i = 0; i < tvNumArray.length; i++) {
-            strTxtID = "tvNum" + i;
-            iRegID = getResources().getIdentifier(strTxtID, "id", "com.softmobile.bingo.base");
-            tvNumArray[i] = (TextView) findViewById(iRegID);
-            tvNumArray[i].setOnClickListener(this);
-           // tvNumArray[i].getLayoutParams().height = tvNumArray[i].getMeasuredWidth();
+ */
+
+        int iCount = 0;
+        TableRow.LayoutParams view_layout = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        view_layout.setMargins(10, 10, 10, 10);
+        for(int i = 0; i < iWidth; i++){
+            TableRow tbRow = new TableRow(MainActivity.this);
+            for(int j = 0; j < iWidth; j++){
+                tvNumArray[iCount] = new TextView(MainActivity.this);
+                tvNumArray[iCount].setId(iCount);
+                tvNumArray[iCount].setBackgroundResource(R.color.onPause);
+                tvNumArray[iCount].setGravity(Gravity.CENTER);
+                tvNumArray[iCount].setTextSize(25);
+                tvNumArray[iCount].setTextColor(Color.WHITE);
+                tvNumArray[iCount].setText("0");
+                tvNumArray[iCount].setOnClickListener(this);
+                tvNumArray[iCount].setLayoutParams(view_layout);
+                tbRow.addView(tvNumArray[iCount]);
+                bIsLine[iCount] = false;
+                iCount++;
+            }
+            tbLayout.addView(tbRow);
         }
 
+        //設定每個TextView的高度等於寬度
         //在onCreate下取得物件長寬之方法
         ViewTreeObserver vtoView = tvNumArray[0].getViewTreeObserver();
         vtoView.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -166,7 +202,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         etDialogWinLine = (EditText) viewDialog.findViewById(R.id.etWinLine);
 
         //如果最小值變數有值時，將最大及最小置入dialog_range layout的EditText
-        if (!"".equals(strRangeMin)) {
+        if ("".equals(strRangeMin) == false) {
             etDialogMin.setText(strRangeMin);
             etDialogMax.setText(strRangeMax);
             etDialogWinLine.setText(strWinLine);
@@ -190,13 +226,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 //如果皆有輸入值存入string變數 , 否則toast
-                if (!"".equals(etDialogMin.getText().toString()) &&
-                        !"".equals(etDialogMax.getText().toString()) &&
-                        !"".equals(etDialogWinLine.getText().toString())) {
+                if ("".equals(etDialogMin.getText().toString()) == false&&
+                    "".equals(etDialogMax.getText().toString()) == false &&
+                    "".equals(etDialogWinLine.getText().toString()) == false) {
 
                     //判斷最大值最小值 , 將較小值存入Min , 較大值存入Max
                     if (Integer.parseInt(etDialogMax.getText().toString()) >
-                            Integer.parseInt(etDialogMin.getText().toString())) {
+                        Integer.parseInt(etDialogMin.getText().toString())) {
 
                         strRangeMin = etDialogMin.getText().toString();
                         strRangeMax = etDialogMax.getText().toString();
@@ -210,7 +246,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                         //獲勝條件是否在1~8
                         if (Integer.parseInt(etDialogWinLine.getText().toString()) > 0 &&
-                                Integer.parseInt(etDialogWinLine.getText().toString()) <= 8) {
+                            Integer.parseInt(etDialogWinLine.getText().toString()) <= 8) {
 
                             strWinLine = etDialogWinLine.getText().toString();
                             //將範圍顯示至tvNoewRange , 並關閉dialog
@@ -222,7 +258,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         }
 
                     } else {
-                        Toast.makeText(MainActivity.this, R.string.dialogToast_lengthError, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, getString(R.string.dialogToast_lengthError) + Integer.toString(tvNumArray.length), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(MainActivity.this, R.string.dialogToast_Null, Toast.LENGTH_SHORT).show();
@@ -318,9 +354,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void createRandom(int iRMin, int iRMax) {
         //產生範圍陣列
         int iRangeArray[] = new int[(iRMax - iRMin) + 1];
-        int iCount = 0;
 
         //將範圍內數字依序存入陣列
+        int iCount = 0;
         for (int i = iRMin; i <= iRMax; i++) {
             iRangeArray[iCount] = i;
             iCount++;
@@ -342,13 +378,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void changeMode(boolean bEditMode) {
+    private void changeMode(boolean bPlayMode) {
         int iModeColor = -1;
         int iModeImage = -1;
         int iModeRangeImage = -1;
         int iModeRandomImage = -1;
         //判斷是否編輯中
-        if (bEditMode == true) {
+        if (bPlayMode == true) {
             iModeColor = R.color.onPause;
             iModeImage = R.drawable.play;
             iModeRangeImage = R.drawable.edit;
@@ -366,12 +402,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         iLine = 0; // 連線數回到 0
         tvLine.setText("0");
-        ivRangeEdit.setEnabled(bEditMode);  //編輯按鈕是否啟用
+        ivRangeEdit.setEnabled(bPlayMode);  //編輯按鈕是否啟用
         ivRangeEdit.setImageResource(iModeRangeImage); //編輯按鈕圖片
-        ivRandom.setEnabled(bEditMode); //隨機按鈕是否啟用
+        ivRandom.setEnabled(bPlayMode); //隨機按鈕是否啟用
         ivRandom.setImageResource(iModeRandomImage); //隨機按鈕圖片
         ivMode.setImageResource(iModeImage); //模式按鈕圖片
-        bIsPlay = !bEditMode; //模式轉變後儲存
+        bIsPlay = !bPlayMode; //模式轉變後儲存
 
         //清除畫板
         pPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
@@ -387,7 +423,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //判斷每個TextView值是否都在範圍內 , 全部皆是啟用Play按鈕
         for (int i = 0; i < tvNumArray.length; i++) {
             iTvTxt = Integer.parseInt(tvNumArray[i].getText().toString());
-            if ((iTvTxt >= iMin && iTvTxt <= iMax) == false) {
+            if (false == (iTvTxt >= iMin && iTvTxt <= iMax)) {
                 break;
             }
             //如果 i 有執行到最後一次
@@ -485,17 +521,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void drawLine(int iDwLine[]) {
-        int[] iStart = new int[2];
-        int[] iEnd = new int[2];
+        int[] iStart = new int[iWidth-1];
+        int[] iEnd = new int[iWidth-1];
         //取得起始和終止物件的座標
         tvNumArray[iDwLine[0]].getLocationOnScreen(iStart);
-        tvNumArray[iDwLine[2]].getLocationOnScreen(iEnd);
+        tvNumArray[iDwLine[iWidth-1]].getLocationOnScreen(iEnd);
         //計算座標
         int iStrartX = iStart[0] + (tvNumArray[iDwLine[0]].getWidth() / 2);
         int iStrartY = iStart[1] + (tvNumArray[iDwLine[0]].getHeight() / 2);
-        int iEndX = iEnd[0] + (tvNumArray[iDwLine[2]].getWidth() / 2);
-        int iEndY = iEnd[1] + (tvNumArray[iDwLine[2]].getHeight() / 2);
-        Log.d("xx",Integer.toString(tvNumArray[iDwLine[0]].getWidth()));
+        int iEndX = iEnd[0] + (tvNumArray[iDwLine[iWidth-1]].getWidth() / 2);
+        int iEndY = iEnd[1] + (tvNumArray[iDwLine[iWidth-1]].getHeight() / 2);
         //畫線
         cCanvas.drawLine(iStrartX, iStrartY, iEndX, iEndY, pPaint);
         ivCanvas.setImageBitmap(bmBitmap);

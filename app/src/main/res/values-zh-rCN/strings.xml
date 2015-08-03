@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Bingo</string>
+
+    <string name="bingoRange_title">宾果数字范围及获胜条件</string>
+        <string name="bingoRange_min">最小值</string>
+        <string name="bingoRange_max">最大值</string>
+        <string name="bingoNum_title">输入范围内数字</string>
+        <string name="bingoNum_hint">数字</string>
+        <string name="bingoWinLine_hint">胜利连线数</string>
+        <string name="bingoWin_title">BINGO</string>
+        <string name="bingoWin_text">You Win</string>
+
+
+        <string name="dialogToast_Null">请输入数值范围及获胜条件</string>
+        <string name="dialogToast_Error">最小值及最大值输入错误</string>
+        <string name="dialogToast_lengthError">范围数量必须超过</string>
+        <string name="dialogToast_EditNumError">数值范围须</string>
+        <string name="dialogToast_EditNumComp">已有相同数字</string>
+        <string name="dialogToast_NumNull">请输入数字</string>
+        <string name="dialogToast_WinLine">获胜条件请输入1~8</string>
+
+        <string name="enter">确定</string>
+        <string name="cancel">取消</string>
+
+        <string name="nowRange">宾果范围：</string>
+        <string name="current">当前:</string>
+        <string name="aims">目标:</string>
+        <string name="nowLine">连线</string>
+</resources>

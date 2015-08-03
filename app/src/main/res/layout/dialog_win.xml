@@ -23,6 +23,7 @@
             android:layout_marginTop="15dp"
             android:text="@string/bingoWin_title"
             android:textColor="#ffffffff"
+            android:textScaleX="1.5"
             android:textSize="25sp" />
     </FrameLayout>
 

@@ -121,127 +121,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:stretchColumns="*">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal">
-
-                <TextView
-                    android:id="@+id/tvNum0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@color/onPause"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="0"
-                    android:textColor="@color/txtNum"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:id="@+id/tvNum1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@color/onPause"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="0"
-                    android:textColor="@color/txtNum"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:id="@+id/tvNum2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@color/onPause"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="0"
-                    android:textColor="@color/txtNum"
-                    android:textSize="25sp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal">
-
-                <TextView
-                    android:id="@+id/tvNum3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@color/onPause"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="0"
-                    android:textColor="@color/txtNum"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:id="@+id/tvNum4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@color/onPause"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="0"
-                    android:textColor="@color/txtNum"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:id="@+id/tvNum5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@color/onPause"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="0"
-                    android:textColor="@color/txtNum"
-                    android:textSize="25sp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal">
-
-                <TextView
-                    android:id="@+id/tvNum6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@color/onPause"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="0"
-                    android:textColor="@color/txtNum"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:id="@+id/tvNum7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@color/onPause"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="0"
-                    android:textColor="@color/txtNum"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:id="@+id/tvNum8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@color/onPause"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="0"
-                    android:textColor="@color/txtNum"
-                    android:textSize="25sp" />
-
-            </TableRow>
+            android:stretchColumns="*"
+            android:id="@+id/tbLayout">
 
         </TableLayout>
+
+        <GridView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/gvBingoMain"
+            android:verticalSpacing="10dp"
+            android:horizontalSpacing="10dp"
+            android:visibility="gone" />
     </LinearLayout>
 
     <FrameLayout
