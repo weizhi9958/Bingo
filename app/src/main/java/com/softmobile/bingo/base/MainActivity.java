@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -25,7 +26,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -37,22 +37,38 @@ import java.util.HashMap;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    String strRangeMin = null;
-    String strRangeMax = null;
-    String strWinLine  = null;
+    private static final String TAG_BINGO = "bingo";
+    private static final String TAG_MIN = "min";
+    private static final String TAG_MAX = "max";
+    private static final String TAG_WIDTH = "width";
+    private static final String TAG_NOWLINE = "nowline";
+    private static final String TAG_WINLINE = "winline";
+    private static final String TAG_GRID = "grid_";
+    private static final String TAG_GAMEMODE = "gamemode";
+    private static final String TAG_GRIDLINE = "gridline_";
 
-    int iWidth = 3;
-    int iLine = 0;
+    public String m_strRangeMin = null;
+    public String m_strRangeMax = null;
+    public String m_strWinLine  = null;
 
-    boolean bIsPlay = false;
-    boolean bIsLine[] = new boolean[iWidth * iWidth];
+    final int MAX_LINE = 8;
+    int m_iRangeMin = 0;
+    int m_iRangeMax = 0;
+    int m_iWidth = 0;
+    int m_iLine = 0;
+    int m_iWinLine = 0;
+
+    boolean m_bIsPlay = false;
+    boolean m_bIsLine[];
+
+    SAlertDialog saDialog;
+    View viewDialog;
 
     TableLayout tbLayout;
     GridView gvBingoMain;
-    ArrayList<HashMap<String,String>> alData;
 
     TextView tvNowRange;
-    TextView tvNumArray[] = new TextView[iWidth * iWidth];
+    TextView tvNumArray[];
     TextView tvLine;
     TextView tvAimsLine;
 
@@ -64,11 +80,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     EditText etDialogMin;
     EditText etDialogMax;
     EditText etDialogWinLine;
+    EditText etDialogWidth;
     EditText etEtDialogNum;
 
     Bitmap bmBitmap;
     Paint pPaint;
     Canvas cCanvas;
+
+    SharedPreferences settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,34 +95,85 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
 
         initView();
-        createRangeDialog();
+
+        settings = getSharedPreferences(TAG_BINGO, 0);
+        if(0 == settings.getInt(TAG_MIN, 0)){
+            viewDialog = View.inflate(MainActivity.this, R.layout.dialog_range, null);
+            saDialog.showSettingDialog(viewDialog);
+        } else {
+            m_iRangeMin   = settings.getInt(TAG_MIN, 0);
+            m_iRangeMax   = settings.getInt(TAG_MAX, 0);
+            m_iWidth      = settings.getInt(TAG_WIDTH, 0);
+            m_iLine       = settings.getInt(TAG_NOWLINE, 0);
+            m_iWinLine    = settings.getInt(TAG_WINLINE, 0);
+            m_strRangeMin = Integer.toString(m_iRangeMin);
+            m_strRangeMax = Integer.toString(m_iRangeMax);
+            m_strWinLine  = Integer.toString(m_iWinLine);
+            m_bIsPlay     = settings.getBoolean(TAG_GAMEMODE,false);
+
+            tvNowRange.setText(m_strRangeMin + " ~ " + m_strRangeMax);
+            tvLine.setText(Integer.toString(m_iLine));
+            tvAimsLine.setText(m_strWinLine);
+            initGirdView();
+
+            for(int i = 0; i < tvNumArray.length; i++){
+                tvNumArray[i].setText(settings.getString(TAG_GRID + i, null));
+                m_bIsLine[i] = settings.getBoolean(TAG_GRIDLINE + i, false);
+                Log.d(Integer.toString(i),String.valueOf(m_bIsLine[i]));
+            }
+
+            censorAllTvEdit();
+            if(true == m_bIsPlay) {
+                changeMode(!m_bIsPlay);
+                censorLine(0);
+            }
+        }
+
+
+
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        settings = getSharedPreferences(TAG_BINGO, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.clear();
+        editor.putInt(TAG_MIN, m_iRangeMin)
+              .putInt(TAG_MAX, m_iRangeMax)
+              .putInt(TAG_WIDTH, m_iWidth)
+              .putInt(TAG_NOWLINE, m_iLine)
+              .putInt(TAG_WINLINE, m_iWinLine)
+              .putBoolean(TAG_GAMEMODE, m_bIsPlay);
+
+        for(int i = 0; i < tvNumArray.length; i++){
+            editor.putString(TAG_GRID + i, tvNumArray[i].getText().toString());
+            editor.putBoolean(TAG_GRIDLINE + i, m_bIsLine[i]);
+        }
+        editor.commit();
+
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ivRangeEdit:
-                createRangeDialog();
+                viewDialog = View.inflate(MainActivity.this, R.layout.dialog_range, null);
+                saDialog.showSettingDialog(viewDialog);
                 break;
             case R.id.ivRandom:
-                createRandom(Integer.parseInt(strRangeMin), Integer.parseInt(strRangeMax));
+                SRandom rnd = new SRandom(m_iRangeMin, m_iRangeMax); //new個SRandom物件並帶入最大及最小值
+                int[] iArray = rnd.getRandom(m_iWidth * m_iWidth); //呼叫getRandom方法帶入最大長度取得回傳陣列
+                for(int i = 0; i < iArray.length; i++){
+                    tvNumArray[i].setText(Integer.toString(iArray[i]));
+                }
                 censorAllTvEdit();
                 break;
             case R.id.ivMode:
-                changeMode(bIsPlay);
+                changeMode(m_bIsPlay);
                 break;
         }
 
-        for (int i = 0; i < tvNumArray.length; i++) {
-            if (v.getId() == tvNumArray[i].getId()) {
-                //判斷遊戲模式, 遊戲中為更改顏色及判斷連線, 非遊戲中為彈出輸入視窗
-                if (bIsPlay == true) {
-                    bIsLine[i] = !bIsLine[i];
-                    censorLine(i);
-                } else {
-                    createEditNumDialog(tvNumArray[i], strRangeMin, strRangeMax);
-                }
-            }
-        }
     }
 
     private void initView() {
@@ -124,36 +194,35 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ivMode.setEnabled(false);
         ivMode.setImageResource(R.drawable.playoff);
 
-/*
-        alData = new ArrayList<HashMap<String, String>>();
-        for(int i = 0; i < tvNumArray.length; i++){
-            HashMap<String,String> hmItem = new HashMap<String,String>();
-            hmItem.put("text", "0");
-            alData.add(hmItem);
-        }
-        SimpleAdapter spadp = new SimpleAdapter(this,alData,R.layout.gridview_bingomain,new String[]{"text"},new int[]{R.id.tvOnGridNum});
-        gvBingoMain.setNumColumns(iWidth);
-        gvBingoMain.setAdapter(spadp);
+        saDialog = new SAlertDialog(this);
+    }
 
- */
-
+    public void initGirdView(){
+        m_bIsLine = new boolean[m_iWidth * m_iWidth];
+        tvNumArray = null;
+        tvNumArray = new TextView[m_iWidth * m_iWidth];
         int iCount = 0;
+
+        tbLayout.removeAllViews();
+
         TableRow.LayoutParams view_layout = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         view_layout.setMargins(10, 10, 10, 10);
-        for(int i = 0; i < iWidth; i++){
+
+        for(int i = 0; i < m_iWidth; i++){
             TableRow tbRow = new TableRow(MainActivity.this);
-            for(int j = 0; j < iWidth; j++){
+            for(int j = 0; j < m_iWidth; j++){
+                tvNumArray[iCount] = null;
                 tvNumArray[iCount] = new TextView(MainActivity.this);
                 tvNumArray[iCount].setId(iCount);
+                tvNumArray[iCount].setTag(iCount);
                 tvNumArray[iCount].setBackgroundResource(R.color.onPause);
                 tvNumArray[iCount].setGravity(Gravity.CENTER);
-                tvNumArray[iCount].setTextSize(25);
                 tvNumArray[iCount].setTextColor(Color.WHITE);
                 tvNumArray[iCount].setText("0");
-                tvNumArray[iCount].setOnClickListener(this);
+                tvNumArray[iCount].setOnClickListener(new SBingoTvListener());
                 tvNumArray[iCount].setLayoutParams(view_layout);
                 tbRow.addView(tvNumArray[iCount]);
-                bIsLine[iCount] = false;
+                m_bIsLine[iCount] = false;
                 iCount++;
             }
             tbLayout.addView(tbRow);
@@ -166,8 +235,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onGlobalLayout() {
                 tvNumArray[0].getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                for(int i = 0; i < tvNumArray.length; i++){
+                for (int i = 0; i < tvNumArray.length; i++) {
                     tvNumArray[i].setHeight(tvNumArray[0].getWidth());
+                    tvNumArray[i].setTextSize((tvNumArray[0].getWidth()) / 9);
                 }
             }
         });
@@ -181,233 +251,63 @@ public class MainActivity extends Activity implements View.OnClickListener {
         pPaint = new Paint(); //新增畫筆
 
         pPaint.setStrokeWidth(15);//筆寬
-        pPaint.setColor(Color.parseColor("#FFFA281C"));//筆色
+        pPaint.setColor(getResources().getColor(R.color.paint));//筆色
 
         bmBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888); //設置點陣圖的寬高,bitmap為透明
         cCanvas = new Canvas(bmBitmap);
         cCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);//設置為透明，畫布也是透明
+
     }
 
-    private void createRangeDialog() {
-        AlertDialog.Builder adDialogOld = new AlertDialog.Builder(MainActivity.this);
-        final View viewDialog = View.inflate(MainActivity.this, R.layout.dialog_range, null);
+    class SBingoTvListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            int iVTag = (Integer)v.getTag();
 
-        adDialogOld.setView(viewDialog); //設置view來源為R.layout.dialog_range
-        adDialogOld.setCancelable(false);
-        adDialogOld.setPositiveButton(R.string.enter, null);
-
-        //取得dialog_range layout的兩個EditText
-        etDialogMin     = (EditText) viewDialog.findViewById(R.id.etRangeMin);
-        etDialogMax     = (EditText) viewDialog.findViewById(R.id.etRangeMax);
-        etDialogWinLine = (EditText) viewDialog.findViewById(R.id.etWinLine);
-
-        //如果最小值變數有值時，將最大及最小置入dialog_range layout的EditText
-        if ("".equals(strRangeMin) == false) {
-            etDialogMin.setText(strRangeMin);
-            etDialogMax.setText(strRangeMax);
-            etDialogWinLine.setText(strWinLine);
-        }
-
-        final AlertDialog adDialogNew = adDialogOld.create(); //取代原本的adDialogOld
-        //adDialogNew彈出時觸發事件
-        adDialogNew.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                //顯示輸入鍵盤
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(etDialogMin, InputMethodManager.SHOW_IMPLICIT);
+            if(true == m_bIsPlay){
+                m_bIsLine[iVTag] = !m_bIsLine[iVTag];
+                censorLine(iVTag);
+            } else {
+                viewDialog = View.inflate(MainActivity.this, R.layout.dialog_editnum, null);
+                saDialog.showEditGridDialog(viewDialog, tvNumArray[iVTag], m_strRangeMin, m_strRangeMax);
             }
-        });
-        adDialogNew.show();
-
-        Button btnDialogEnter = adDialogNew.getButton(AlertDialog.BUTTON_POSITIVE);  //取得Dialog的button
-        //按鈕Click事件
-        btnDialogEnter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //如果皆有輸入值存入string變數 , 否則toast
-                if ("".equals(etDialogMin.getText().toString()) == false&&
-                    "".equals(etDialogMax.getText().toString()) == false &&
-                    "".equals(etDialogWinLine.getText().toString()) == false) {
-
-                    //判斷最大值最小值 , 將較小值存入Min , 較大值存入Max
-                    if (Integer.parseInt(etDialogMax.getText().toString()) >
-                        Integer.parseInt(etDialogMin.getText().toString())) {
-
-                        strRangeMin = etDialogMin.getText().toString();
-                        strRangeMax = etDialogMax.getText().toString();
-                    } else {
-                        strRangeMin = etDialogMax.getText().toString();
-                        strRangeMax = etDialogMin.getText().toString();
-                    }
-
-                    //範圍數是否超過9
-                    if (Integer.parseInt(strRangeMax) - Integer.parseInt(strRangeMin) >= tvNumArray.length - 1) {
-
-                        //獲勝條件是否在1~8
-                        if (Integer.parseInt(etDialogWinLine.getText().toString()) > 0 &&
-                            Integer.parseInt(etDialogWinLine.getText().toString()) <= 8) {
-
-                            strWinLine = etDialogWinLine.getText().toString();
-                            //將範圍顯示至tvNoewRange , 並關閉dialog
-                            tvNowRange.setText(strRangeMin + " ~ " + strRangeMax);
-                            tvAimsLine.setText(strWinLine);
-                            adDialogNew.dismiss();
-                        } else {
-                            Toast.makeText(MainActivity.this, R.string.dialogToast_WinLine, Toast.LENGTH_SHORT).show();
-                        }
-
-                    } else {
-                        Toast.makeText(MainActivity.this, getString(R.string.dialogToast_lengthError) + Integer.toString(tvNumArray.length), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(MainActivity.this, R.string.dialogToast_Null, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void createEditNumDialog(final TextView tvDialogNum, final String strEtDialogMin, final String strEtDialogMax) {
-        AlertDialog.Builder adDialogOld = new AlertDialog.Builder(MainActivity.this);
-        final View viewDialog = View.inflate(MainActivity.this, R.layout.dialog_editnum, null);
-
-        adDialogOld.setView(viewDialog); //設置view來源為R.layout.dialog_range
-        adDialogOld.setCancelable(false);
-        adDialogOld.setPositiveButton(R.string.enter, null);
-
-        //取得dialog_editnum layout的EditText , 並給目前TextView的值
-        etEtDialogNum = (EditText) viewDialog.findViewById(R.id.etNum);
-        etEtDialogNum.setText(tvDialogNum.getText().toString());
-
-        final AlertDialog alert = adDialogOld.create(); //取代原本的adDialogOld
-
-        //adDialogNew彈出時觸發事件
-        alert.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                //顯示輸入鍵盤
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(etEtDialogNum, InputMethodManager.SHOW_IMPLICIT);
-            }
-        });
-        alert.show();
-
-        Button btnDialogEnter = alert.getButton(AlertDialog.BUTTON_POSITIVE);  //取得Dialog的button
-        //按鈕Click事件
-        btnDialogEnter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //判斷是否有輸入
-                if (!"".equals(etEtDialogNum.getText().toString())) {
-                    int iEtDialogMin = Integer.parseInt(strEtDialogMin); //字串Min變數轉成數字
-                    int iEtDialogMax = Integer.parseInt(strEtDialogMax); //字串Max變數轉成數字
-                    int iEtDialogNum = Integer.parseInt(etEtDialogNum.getText().toString()); //Dialog中的EditText存入int變數
-                    //如果輸入值在範圍內
-                    if (iEtDialogNum >= iEtDialogMin && iEtDialogNum <= iEtDialogMax) {
-                        boolean bComp = false;
-                        //與每個TextView Num做判斷
-                        for (int i = 0; i < tvNumArray.length; i++) {
-                            //非TextView陣列中的數字 或 為傳入的數字
-                            if (!Integer.toString(iEtDialogNum).equals(tvNumArray[i].getText().toString()) ||
-                                tvNumArray[i].getText().toString().equals(tvDialogNum.getText().toString())) {
-                                bComp = false;
-                            } else {
-                                bComp = true;
-                                break; // 其中一迴圈不符合就跳出
-                            }
-                        }
-
-                        //如果比較後皆為false
-                        if (bComp == false) {
-                            tvDialogNum.setText(etEtDialogNum.getText().toString());
-                            alert.dismiss();
-                            censorAllTvEdit(); //判斷play是否可按
-                        } else {
-                            Toast.makeText(MainActivity.this, R.string.dialogToast_EditNumComp, Toast.LENGTH_SHORT).show();
-                        }
-
-                    } else {
-                        Toast.makeText(MainActivity.this, getString(R.string.dialogToast_EditNumError) + tvNowRange.getText().toString(), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(MainActivity.this, R.string.dialogToast_NumNull, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void createWinDialog() {
-        AlertDialog.Builder adDialogOld = new AlertDialog.Builder(MainActivity.this);
-        final View viewDialog = View.inflate(MainActivity.this, R.layout.dialog_win, null);
-
-        adDialogOld.setView(viewDialog); //設置view來源為R.layout.dialog_range
-        adDialogOld.setCancelable(false);
-        adDialogOld.setPositiveButton(R.string.enter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                changeMode(bIsPlay);
-            }
-        });
-        adDialogOld.create().show();
-    }
-
-    private void createRandom(int iRMin, int iRMax) {
-        //產生範圍陣列
-        int iRangeArray[] = new int[(iRMax - iRMin) + 1];
-
-        //將範圍內數字依序存入陣列
-        int iCount = 0;
-        for (int i = iRMin; i <= iRMax; i++) {
-            iRangeArray[iCount] = i;
-            iCount++;
-        }
-
-        //洗牌法打亂陣列
-        for (int i = 0; i < iRangeArray.length; i++) {
-            int iN1 = (int) (Math.random() * iRangeArray.length);
-            int iN2 = (int) (Math.random() * iRangeArray.length);
-
-            int iTemp = iRangeArray[iN1];
-            iRangeArray[iN1] = iRangeArray[iN2];
-            iRangeArray[iN2] = iTemp;
-        }
-
-        //將陣列前9個存入TextView
-        for (int i = 0; i < tvNumArray.length; i++) {
-            tvNumArray[i].setText(Integer.toString(iRangeArray[i]));
         }
     }
 
-    private void changeMode(boolean bPlayMode) {
+    public void changeMode(boolean bPlayMode) {
         int iModeColor = -1;
         int iModeImage = -1;
         int iModeRangeImage = -1;
         int iModeRandomImage = -1;
         //判斷是否編輯中
-        if (bPlayMode == true) {
+        if (true == bPlayMode) {
             iModeColor = R.color.onPause;
             iModeImage = R.drawable.play;
             iModeRangeImage = R.drawable.edit;
             iModeRandomImage = R.drawable.dice;
+            for (int i = 0; i < tvNumArray.length; i++) {
+                tvNumArray[i].setBackgroundResource(iModeColor); //將所有TextView變色
+                m_bIsLine[i] = false; //所有是否點擊變數回預設值
+            }
         } else {
             iModeColor = R.color.onPlay;
             iModeImage = R.drawable.pause;
             iModeRangeImage = R.drawable.editoff;
             iModeRandomImage = R.drawable.diceoff;
-        }
-        for (int i = 0; i < tvNumArray.length; i++) {
-            tvNumArray[i].setBackgroundResource(iModeColor); //將所有TextView變色
-            bIsLine[i] = false; //所有是否點擊變數回預設值
+            for (int i = 0; i < tvNumArray.length; i++) {
+                tvNumArray[i].setBackgroundResource(iModeColor); //將所有TextView變色
+            }
         }
 
-        iLine = 0; // 連線數回到 0
+
+        m_iLine = 0; // 連線數回到 0
         tvLine.setText("0");
         ivRangeEdit.setEnabled(bPlayMode);  //編輯按鈕是否啟用
         ivRangeEdit.setImageResource(iModeRangeImage); //編輯按鈕圖片
         ivRandom.setEnabled(bPlayMode); //隨機按鈕是否啟用
         ivRandom.setImageResource(iModeRandomImage); //隨機按鈕圖片
         ivMode.setImageResource(iModeImage); //模式按鈕圖片
-        bIsPlay = !bPlayMode; //模式轉變後儲存
+        m_bIsPlay = !bPlayMode; //模式轉變後儲存
 
         //清除畫板
         pPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
@@ -415,15 +315,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         pPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
     }
 
-    private void censorAllTvEdit() {
+    public void censorAllTvEdit() {
         int iTvTxt;
-        int iMin = Integer.parseInt(strRangeMin);
-        int iMax = Integer.parseInt(strRangeMax);
+        int iMin = Integer.parseInt(m_strRangeMin);
+        int iMax = Integer.parseInt(m_strRangeMax);
 
         //判斷每個TextView值是否都在範圍內 , 全部皆是啟用Play按鈕
         for (int i = 0; i < tvNumArray.length; i++) {
             iTvTxt = Integer.parseInt(tvNumArray[i].getText().toString());
             if (false == (iTvTxt >= iMin && iTvTxt <= iMax)) {
+                ivMode.setEnabled(false);
+                ivMode.setImageResource(R.drawable.playoff);
                 break;
             }
             //如果 i 有執行到最後一次
@@ -435,9 +337,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void censorLine(int iView) {
-        iLine = 0;
+        m_iLine = 0;
         int iPoint;
-        int iLineArray[] = new int[iWidth];
+        int m_iLineArray[] = new int[m_iWidth];
 
 
         //清除畫板
@@ -446,91 +348,92 @@ public class MainActivity extends Activity implements View.OnClickListener {
         pPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
 
         //判斷目前點擊狀態給予顏色
-        if(bIsLine[iView] == true){
+        if(true == m_bIsLine[iView]){
             tvNumArray[iView].setBackgroundResource(R.color.clickTextView);
         }else{
             tvNumArray[iView].setBackgroundResource(R.color.onPlay);
         }
 
         //橫向連線數
-        for (int i = 0; i < iWidth * iWidth; i += iWidth) {
+        for (int i = 0; i < m_iWidth * m_iWidth; i += m_iWidth) {
             iPoint = 0;
-            for (int j = i; j < i + iWidth; j++) {
-                if (bIsLine[j] == false) {
+            for (int j = i; j < i + m_iWidth; j++) {
+                if (false == m_bIsLine[j]) {
                     continue;
                 }
-                iLineArray[iPoint] = j; //將點擊到的TextView存入陣列
+                m_iLineArray[iPoint] = j; //將點擊到的TextView存入陣列
                 iPoint++; //點擊數+1
             }
             //如果點擊數=3
-            if (iWidth == iPoint) {
-                drawLine(iLineArray); //畫線
-                iLine++; //連線數+1
+            if (m_iWidth == iPoint) {
+                drawLine(m_iLineArray); //畫線
+                m_iLine++; //連線數+1
             }
         }
         //直向連線數
-        for (int i = 0; i < iWidth; i++) {
+        for (int i = 0; i < m_iWidth; i++) {
             iPoint = 0;
-            for (int j = i; j < iWidth * iWidth; j += iWidth) {
-                if (bIsLine[j] == false) {
+            for (int j = i; j < m_iWidth * m_iWidth; j += m_iWidth) {
+                if (false == m_bIsLine[j]) {
                     continue;
                 }
-                iLineArray[iPoint] = j; //將點擊到的TextView存入陣列
+                m_iLineArray[iPoint] = j; //將點擊到的TextView存入陣列
                 iPoint++; //點擊數+1
             }
             //如果點擊數=3
-            if (iWidth == iPoint) {
-                drawLine(iLineArray); //畫線
-                iLine++; //連線數+1
+            if (m_iWidth == iPoint) {
+                drawLine(m_iLineArray); //畫線
+                m_iLine++; //連線數+1
             }
         }
         //左上至右下
         iPoint = 0;
-        for (int i = 0; i < iWidth * iWidth; i += (iWidth + 1)) {
-            if (bIsLine[i] == false) {
+        for (int i = 0; i < m_iWidth * m_iWidth; i += (m_iWidth + 1)) {
+            if (false == m_bIsLine[i]) {
                 continue;
             }
-            iLineArray[iPoint] = i; //將點擊到的TextView存入陣列
+            m_iLineArray[iPoint] = i; //將點擊到的TextView存入陣列
             iPoint++; //點擊數+1
             //如果點擊數=3
-            if (iWidth == iPoint) {
-                drawLine(iLineArray); //畫線
-                iLine++; //連線數+1
+            if (m_iWidth == iPoint) {
+                drawLine(m_iLineArray); //畫線
+                m_iLine++; //連線數+1
             }
         }
         //右上至左下
         iPoint = 0;
-        for (int i = iWidth - 1; i <= (iWidth * iWidth) - iWidth; i += (iWidth - 1)) {
-            if (bIsLine[i] == false) {
+        for (int i = m_iWidth - 1; i <= (m_iWidth * m_iWidth) - m_iWidth; i += (m_iWidth - 1)) {
+            if (false == m_bIsLine[i]) {
                 continue;
             }
-            iLineArray[iPoint] = i; //將點擊到的TextView存入陣列
+            m_iLineArray[iPoint] = i; //將點擊到的TextView存入陣列
             iPoint++; //點擊數+1
             //如果點擊數=3
-            if (iWidth == iPoint) {
-                drawLine(iLineArray); //畫線
-                iLine++; //連線數+1
+            if (m_iWidth == iPoint) {
+                drawLine(m_iLineArray); //畫線
+                m_iLine++; //連線數+1
             }
         }
 
-        tvLine.setText(Integer.toString(iLine));
+        tvLine.setText(Integer.toString(m_iLine));
 
-        if(iLine >= Integer.parseInt(strWinLine)){
-            createWinDialog();
+        if(m_iLine >= Integer.parseInt(m_strWinLine)){
+            viewDialog = View.inflate(MainActivity.this, R.layout.dialog_win, null);
+            saDialog.showWinDialog(viewDialog);
         }
     }
 
     private void drawLine(int iDwLine[]) {
-        int[] iStart = new int[iWidth-1];
-        int[] iEnd = new int[iWidth-1];
+        int[] iStart = new int[m_iWidth-1];
+        int[] iEnd = new int[m_iWidth-1];
         //取得起始和終止物件的座標
         tvNumArray[iDwLine[0]].getLocationOnScreen(iStart);
-        tvNumArray[iDwLine[iWidth-1]].getLocationOnScreen(iEnd);
+        tvNumArray[iDwLine[m_iWidth-1]].getLocationOnScreen(iEnd);
         //計算座標
         int iStrartX = iStart[0] + (tvNumArray[iDwLine[0]].getWidth() / 2);
         int iStrartY = iStart[1] + (tvNumArray[iDwLine[0]].getHeight() / 2);
-        int iEndX = iEnd[0] + (tvNumArray[iDwLine[iWidth-1]].getWidth() / 2);
-        int iEndY = iEnd[1] + (tvNumArray[iDwLine[iWidth-1]].getHeight() / 2);
+        int iEndX = iEnd[0] + (tvNumArray[iDwLine[m_iWidth-1]].getWidth() / 2);
+        int iEndY = iEnd[1] + (tvNumArray[iDwLine[m_iWidth-1]].getHeight() / 2);
         //畫線
         cCanvas.drawLine(iStrartX, iStrartY, iEndX, iEndY, pPaint);
         ivCanvas.setImageBitmap(bmBitmap);

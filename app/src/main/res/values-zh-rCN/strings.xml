@@ -7,6 +7,7 @@
         <string name="bingoNum_title">输入范围内数字</string>
         <string name="bingoNum_hint">数字</string>
         <string name="bingoWinLine_hint">胜利连线数</string>
+        <string name="bingoWidth_hint">宽度(如 3x3 请输入 3)</string>
         <string name="bingoWin_title">BINGO</string>
         <string name="bingoWin_text">You Win</string>
 
@@ -17,7 +18,7 @@
         <string name="dialogToast_EditNumError">数值范围须</string>
         <string name="dialogToast_EditNumComp">已有相同数字</string>
         <string name="dialogToast_NumNull">请输入数字</string>
-        <string name="dialogToast_WinLine">获胜条件请输入1~8</string>
+        <string name="dialogToast_WinLine">模式最大连线数为</string>
 
         <string name="enter">确定</string>
         <string name="cancel">取消</string>

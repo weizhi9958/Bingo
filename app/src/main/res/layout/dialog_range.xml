@@ -26,50 +26,81 @@
             android:textSize="25sp" />
     </FrameLayout>
 
-    <EditText
-        android:id="@+id/etRangeMin"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:focusable="true"
-        android:hint="@string/bingoRange_min"
-        android:inputType="number"
-        android:selectAllOnFocus="true"
-        android:focusableInTouchMode="true"
-        android:maxLength="4" />
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etRangeMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:focusable="true"
+            android:hint="@string/bingoRange_min"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:focusableInTouchMode="true"
+            android:maxLength="4"
+            android:layout_weight="1"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="~"
+            android:id="@+id/textView6"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="16dp" />
+
+        <EditText
+            android:id="@+id/etRangeMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="@string/bingoRange_max"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:maxLength="4"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
 
     <EditText
-        android:id="@+id/etRangeMax"
+        android:id="@+id/etWidth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="@string/bingoRange_max"
+        android:hint="@string/bingoWidth_hint"
         android:inputType="number"
         android:selectAllOnFocus="true"
-        android:maxLength="4" />
+        android:maxLength="2"
+        android:gravity="center_horizontal" />
 
     <EditText
         android:id="@+id/etWinLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
-        android:focusable="true"
         android:hint="@string/bingoWinLine_hint"
         android:inputType="number"
         android:selectAllOnFocus="true"
-        android:focusableInTouchMode="true"
-        android:maxLength="2" />
+        android:maxLength="2"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="16dp" />
 
 </LinearLayout>

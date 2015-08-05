@@ -4,4 +4,5 @@
     <color name="onPause">#FFFFC003</color>
     <color name="clickTextView">#FFFA8021</color>
     <color name="txtNum">#FFFFFF</color>
+    <color name="paint">#FFFA281C</color>
 </resources>
