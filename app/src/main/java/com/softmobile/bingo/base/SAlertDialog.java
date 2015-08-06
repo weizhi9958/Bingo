@@ -15,15 +15,37 @@ public class SAlertDialog extends AlertDialog {
     MainActivity maActivity = null;
     AlertDialog.Builder adDialogOld;
 
+    int m_iOldWidth;
+
     public SAlertDialog(Context context) {
         super(context);
         maActivity = (MainActivity) context;
         adDialogOld = new AlertDialog.Builder(context);
     }
 
+    public void showLoadDialog(final View viewLayout){
+        adDialogOld.setView(viewLayout); //設置view來源為R.layout.dialog_range
+        adDialogOld.setCancelable(false);
+        adDialogOld.setPositiveButton(R.string.bingoLoad_Yes, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                maActivity.loadSetting();
+            }
+        });
+        adDialogOld.setNegativeButton(R.string.bingoLoad_No, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                View viewDialog = View.inflate(maActivity, R.layout.dialog_range, null);
+                showSettingDialog(viewDialog);
+            }
+        });
+        adDialogOld.create().show();
+    }
+
     public void showSettingDialog(View viewLayout){
         adDialogOld.setView(viewLayout);
         adDialogOld.setCancelable(false);
+        adDialogOld.setNegativeButton(null, null);
         adDialogOld.setPositiveButton(R.string.enter, null);
 
         //取得dialog_range layout的兩個EditText
@@ -38,6 +60,8 @@ public class SAlertDialog extends AlertDialog {
             maActivity.etDialogMax.setText(maActivity.m_strRangeMax);
             maActivity.etDialogWinLine.setText(maActivity.m_strWinLine);
             maActivity.etDialogWidth.setText(Integer.toString(maActivity.m_iWidth));
+
+            m_iOldWidth = maActivity.m_iWidth;
         }
 
         final AlertDialog adDialogNew = adDialogOld.create(); //取代原本的adDialogOld
@@ -47,7 +71,7 @@ public class SAlertDialog extends AlertDialog {
             public void onShow(DialogInterface dialog) {
                 //顯示輸入鍵盤
                 InputMethodManager imm = (InputMethodManager) maActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(maActivity.etDialogMin, InputMethodManager.SHOW_IMPLICIT);
+                imm.showSoftInput(maActivity.etDialogWidth, InputMethodManager.SHOW_IMPLICIT);
             }
         });
         adDialogNew.show();
@@ -57,6 +81,7 @@ public class SAlertDialog extends AlertDialog {
         btnDialogEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //如果皆有輸入值存入string變數 , 否則toast
                 if (false == "".equals(maActivity.etDialogMin.getText().toString())&&
                         false == "".equals(maActivity.etDialogMax.getText().toString()) &&
@@ -73,35 +98,47 @@ public class SAlertDialog extends AlertDialog {
                         maActivity.m_strRangeMin = maActivity.etDialogMax.getText().toString();
                         maActivity.m_strRangeMax = maActivity.etDialogMin.getText().toString();
                     }
+
                     maActivity.m_iRangeMin = Integer.parseInt(maActivity.m_strRangeMin);
                     maActivity.m_iRangeMax = Integer.parseInt(maActivity.m_strRangeMax);
                     maActivity.m_iWidth = Integer.parseInt(maActivity.etDialogWidth.getText().toString());
 
-                    //範圍數是否超過總格數
-                    if (Integer.parseInt(maActivity.m_strRangeMax) - Integer.parseInt(maActivity.m_strRangeMin) >= maActivity.m_iWidth * maActivity.m_iWidth - 1) {
+                    //寬度是否大於等於2
+                    if(Integer.parseInt(maActivity.etDialogWidth.getText().toString()) >= 2){
 
-                        int iSetWinLine = maActivity.MAX_LINE + ((maActivity.m_iWidth - 3) * 2);
-                        //獲勝條件是否在範圍內
-                        if (Integer.parseInt(maActivity.etDialogWinLine.getText().toString()) > 0 &&
-                                Integer.parseInt(maActivity.etDialogWinLine.getText().toString()) <= iSetWinLine) {
+                        //範圍數是否超過總格數 , 或大於 0
+                        if (maActivity.m_iRangeMax - maActivity.m_iRangeMin >= maActivity.m_iWidth * maActivity.m_iWidth - 1 &&
+                            maActivity.m_iRangeMin > 0) {
 
-                            maActivity.m_strWinLine = maActivity.etDialogWinLine.getText().toString();
-                            maActivity.m_iWinLine = Integer.parseInt(maActivity.m_strWinLine);
-                            //將範圍顯示至tvNoewRange , 並關閉dialog
-                            maActivity.tvNowRange.setText(maActivity.m_strRangeMin + " ~ " + maActivity.m_strRangeMax);
-                            maActivity.tvAimsLine.setText(maActivity.m_strWinLine);
-                            maActivity.initGirdView();
-                            maActivity.censorAllTvEdit();
-                            adDialogNew.dismiss();
+                            int iSetWinLine = maActivity.MAX_LINE + ((maActivity.m_iWidth - 3) * 2);
+                            //獲勝條件是否在範圍內
+                            if (Integer.parseInt(maActivity.etDialogWinLine.getText().toString()) > 0 &&
+                                    Integer.parseInt(maActivity.etDialogWinLine.getText().toString()) <= iSetWinLine) {
+
+                                maActivity.m_strWinLine = maActivity.etDialogWinLine.getText().toString();
+                                maActivity.m_iWinLine = Integer.parseInt(maActivity.m_strWinLine);
+                                //將範圍顯示至tvNoewRange , 並關閉dialog
+                                maActivity.tvNowRange.setText(maActivity.m_strRangeMin + " ~ " + maActivity.m_strRangeMax);
+                                maActivity.tvAimsLine.setText(maActivity.m_strWinLine);
+                                //如寬度為目前寬度就不再產生格子
+                                if(false == (m_iOldWidth == maActivity.m_iWidth) || m_iOldWidth == 0){
+                                    maActivity.initGirdView();
+                                }
+
+                                maActivity.censorAllTvEdit();
+                                adDialogNew.dismiss();
+                            } else {
+                                String strToast = Integer.toString(maActivity.m_iWidth) + "x" + Integer.toString(maActivity.m_iWidth);
+                                strToast += maActivity.getString(R.string.dialogToast_WinLine);
+                                strToast += Integer.toString(iSetWinLine);
+                                Toast.makeText(maActivity, strToast, Toast.LENGTH_SHORT).show();
+                            }
+
                         } else {
-                            String strToast = Integer.toString(maActivity.m_iWidth) + "x" + Integer.toString(maActivity.m_iWidth);
-                            strToast += maActivity.getString(R.string.dialogToast_WinLine);
-                            strToast += Integer.toString(iSetWinLine);
-                            Toast.makeText(maActivity, strToast, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(maActivity, maActivity.getString(R.string.dialogToast_lengthError) + Integer.toString(maActivity.m_iWidth * maActivity.m_iWidth), Toast.LENGTH_SHORT).show();
                         }
-
                     } else {
-                        Toast.makeText(maActivity, maActivity.getString(R.string.dialogToast_lengthError) + Integer.toString(maActivity.m_iWidth * maActivity.m_iWidth), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(maActivity, maActivity.getString(R.string.dialogToast_Width),Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(maActivity, R.string.dialogToast_Null, Toast.LENGTH_SHORT).show();
@@ -112,7 +149,8 @@ public class SAlertDialog extends AlertDialog {
 
     public void showEditGridDialog(View viewLayout,final TextView tvDialogNum, final String strEtDialogMin, final String strEtDialogMax){
         adDialogOld.setView(viewLayout);
-        adDialogOld.setCancelable(false);
+        adDialogOld.setCancelable(true);
+        adDialogOld.setNegativeButton(null,null);
         adDialogOld.setPositiveButton(R.string.enter, null);
 
         //取得dialog_editnum layout的EditText , 並給目前TextView的值
@@ -180,6 +218,7 @@ public class SAlertDialog extends AlertDialog {
     public void showWinDialog(View viewLayout){
         adDialogOld.setView(viewLayout); //設置view來源為R.layout.dialog_range
         adDialogOld.setCancelable(false);
+        adDialogOld.setNegativeButton(null,null);
         adDialogOld.setPositiveButton(R.string.enter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

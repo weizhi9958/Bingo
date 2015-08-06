@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -88,6 +89,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     Canvas cCanvas;
 
     SharedPreferences settings;
+    private Handler hdHandler;
+    private Runnable raRun;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,32 +104,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             viewDialog = View.inflate(MainActivity.this, R.layout.dialog_range, null);
             saDialog.showSettingDialog(viewDialog);
         } else {
-            m_iRangeMin   = settings.getInt(TAG_MIN, 0);
-            m_iRangeMax   = settings.getInt(TAG_MAX, 0);
-            m_iWidth      = settings.getInt(TAG_WIDTH, 0);
-            m_iLine       = settings.getInt(TAG_NOWLINE, 0);
-            m_iWinLine    = settings.getInt(TAG_WINLINE, 0);
-            m_strRangeMin = Integer.toString(m_iRangeMin);
-            m_strRangeMax = Integer.toString(m_iRangeMax);
-            m_strWinLine  = Integer.toString(m_iWinLine);
-            m_bIsPlay     = settings.getBoolean(TAG_GAMEMODE,false);
-
-            tvNowRange.setText(m_strRangeMin + " ~ " + m_strRangeMax);
-            tvLine.setText(Integer.toString(m_iLine));
-            tvAimsLine.setText(m_strWinLine);
-            initGirdView();
-
-            for(int i = 0; i < tvNumArray.length; i++){
-                tvNumArray[i].setText(settings.getString(TAG_GRID + i, null));
-                m_bIsLine[i] = settings.getBoolean(TAG_GRIDLINE + i, false);
-                Log.d(Integer.toString(i),String.valueOf(m_bIsLine[i]));
-            }
-
-            censorAllTvEdit();
-            if(true == m_bIsPlay) {
-                changeMode(!m_bIsPlay);
-                censorLine(0);
-            }
+            viewDialog = View.inflate(MainActivity.this, R.layout.dialog_load, null);
+            saDialog.showLoadDialog(viewDialog);
         }
 
 
@@ -136,23 +115,29 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
-        settings = getSharedPreferences(TAG_BINGO, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.clear();
-        editor.putInt(TAG_MIN, m_iRangeMin)
-              .putInt(TAG_MAX, m_iRangeMax)
-              .putInt(TAG_WIDTH, m_iWidth)
-              .putInt(TAG_NOWLINE, m_iLine)
-              .putInt(TAG_WINLINE, m_iWinLine)
-              .putBoolean(TAG_GAMEMODE, m_bIsPlay);
+        if(0 != m_iWidth) {
+            settings = getSharedPreferences(TAG_BINGO, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.clear();
+            editor.putInt(TAG_MIN, m_iRangeMin)
+                    .putInt(TAG_MAX, m_iRangeMax)
+                    .putInt(TAG_WIDTH, m_iWidth)
+                    .putInt(TAG_NOWLINE, m_iLine)
+                    .putInt(TAG_WINLINE, m_iWinLine)
+                    .putBoolean(TAG_GAMEMODE, m_bIsPlay);
 
-        for(int i = 0; i < tvNumArray.length; i++){
-            editor.putString(TAG_GRID + i, tvNumArray[i].getText().toString());
-            editor.putBoolean(TAG_GRIDLINE + i, m_bIsLine[i]);
+            for (int i = 0; i < tvNumArray.length; i++) {
+                editor.putString(TAG_GRID + i, tvNumArray[i].getText().toString());
+                editor.putBoolean(TAG_GRIDLINE + i, m_bIsLine[i]);
+            }
+            editor.commit();
         }
-        editor.commit();
 
+        if(null != hdHandler){
+            hdHandler.removeCallbacks(raRun);
+        }
     }
+
 
     @Override
     public void onClick(View v) {
@@ -195,6 +180,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ivMode.setImageResource(R.drawable.playoff);
 
         saDialog = new SAlertDialog(this);
+
+
+        //取得螢幕長寬
+        WindowManager manager = getWindowManager();
+        Display display = manager.getDefaultDisplay();
+        int screenWidth = display.getWidth();
+        int screenHeight = display.getHeight();
+
+        pPaint = new Paint(); //新增畫筆
+
+        pPaint.setStrokeWidth(15);//筆寬
+        pPaint.setColor(getResources().getColor(R.color.paint));//筆色
+
+        bmBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888); //設置點陣圖的寬高,bitmap為透明
+        cCanvas = new Canvas(bmBitmap);
+        cCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);//設置為透明，畫布也是透明
     }
 
     public void initGirdView(){
@@ -229,12 +230,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         //設定每個TextView的高度等於寬度
-        //在onCreate下取得物件長寬之方法
+        //onCreate執行結束後再設定高度
         ViewTreeObserver vtoView = tvNumArray[0].getViewTreeObserver();
         vtoView.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                tvNumArray[0].getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                //解決removeGlobalOnLayoutListener再SDK版本16以上被棄用問題
+                if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    tvNumArray[0].getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                else {
+                    tvNumArray[0].getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+
                 for (int i = 0; i < tvNumArray.length; i++) {
                     tvNumArray[i].setHeight(tvNumArray[0].getWidth());
                     tvNumArray[i].setTextSize((tvNumArray[0].getWidth()) / 9);
@@ -242,21 +250,55 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         });
 
-        //取得螢幕長寬
-        WindowManager manager = getWindowManager();
-        Display display = manager.getDefaultDisplay();
-        int screenWidth = display.getWidth();
-        int screenHeight = display.getHeight();
+    }
 
-        pPaint = new Paint(); //新增畫筆
+    public void loadSetting(){
+        m_iRangeMin   = settings.getInt(TAG_MIN, 0);
+        m_iRangeMax   = settings.getInt(TAG_MAX, 0);
+        m_iWidth      = settings.getInt(TAG_WIDTH, 0);
+        m_iLine       = settings.getInt(TAG_NOWLINE, 0);
+        m_iWinLine    = settings.getInt(TAG_WINLINE, 0);
+        m_strRangeMin = Integer.toString(m_iRangeMin);
+        m_strRangeMax = Integer.toString(m_iRangeMax);
+        m_strWinLine  = Integer.toString(m_iWinLine);
+        m_bIsPlay     = settings.getBoolean(TAG_GAMEMODE,false);
 
-        pPaint.setStrokeWidth(15);//筆寬
-        pPaint.setColor(getResources().getColor(R.color.paint));//筆色
+        tvNowRange.setText(m_strRangeMin + " ~ " + m_strRangeMax);
+        tvLine.setText(Integer.toString(m_iLine));
+        tvAimsLine.setText(m_strWinLine);
+        initGirdView();
 
-        bmBitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888); //設置點陣圖的寬高,bitmap為透明
-        cCanvas = new Canvas(bmBitmap);
-        cCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);//設置為透明，畫布也是透明
+        for(int i = 0; i < tvNumArray.length; i++){
+            tvNumArray[i].setText(settings.getString(TAG_GRID + i, null));
+            m_bIsLine[i] = settings.getBoolean(TAG_GRIDLINE + i, false);
 
+            Log.d(Integer.toString(i),String.valueOf(m_bIsLine[i]));
+        }
+
+        censorAllTvEdit();
+        if(true == m_bIsPlay) {
+            changeMode(!m_bIsPlay);
+
+            hdHandler=new Handler();
+            raRun=new Runnable() {
+                @Override
+                public void run() {
+                    //遞迴檢查元件的寬高是否一致
+                    if (tvNumArray[0].getWidth() == tvNumArray[0].getHeight()) {
+
+                        for (int i = 0; i < tvNumArray.length; i++) {
+                            censorLine(i);
+                        }
+                    }
+                    else{
+                        hdHandler.postDelayed(raRun, 100);
+                    }
+                }
+            };
+            hdHandler.postDelayed(raRun, 100);
+
+
+        }
     }
 
     class SBingoTvListener implements View.OnClickListener{
@@ -339,7 +381,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void censorLine(int iView) {
         m_iLine = 0;
         int iPoint;
-        int m_iLineArray[] = new int[m_iWidth];
+        int iLineArray[] = new int[m_iWidth];
 
 
         //清除畫板
@@ -361,12 +403,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 if (false == m_bIsLine[j]) {
                     continue;
                 }
-                m_iLineArray[iPoint] = j; //將點擊到的TextView存入陣列
+                iLineArray[iPoint] = j; //將點擊到的TextView存入陣列
                 iPoint++; //點擊數+1
             }
             //如果點擊數=3
             if (m_iWidth == iPoint) {
-                drawLine(m_iLineArray); //畫線
+                drawLine(iLineArray); //畫線
                 m_iLine++; //連線數+1
             }
         }
@@ -377,12 +419,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 if (false == m_bIsLine[j]) {
                     continue;
                 }
-                m_iLineArray[iPoint] = j; //將點擊到的TextView存入陣列
+                iLineArray[iPoint] = j; //將點擊到的TextView存入陣列
                 iPoint++; //點擊數+1
             }
             //如果點擊數=3
             if (m_iWidth == iPoint) {
-                drawLine(m_iLineArray); //畫線
+                drawLine(iLineArray); //畫線
                 m_iLine++; //連線數+1
             }
         }
@@ -392,11 +434,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if (false == m_bIsLine[i]) {
                 continue;
             }
-            m_iLineArray[iPoint] = i; //將點擊到的TextView存入陣列
+            iLineArray[iPoint] = i; //將點擊到的TextView存入陣列
             iPoint++; //點擊數+1
             //如果點擊數=3
             if (m_iWidth == iPoint) {
-                drawLine(m_iLineArray); //畫線
+                drawLine(iLineArray); //畫線
                 m_iLine++; //連線數+1
             }
         }
@@ -406,11 +448,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if (false == m_bIsLine[i]) {
                 continue;
             }
-            m_iLineArray[iPoint] = i; //將點擊到的TextView存入陣列
+            iLineArray[iPoint] = i; //將點擊到的TextView存入陣列
             iPoint++; //點擊數+1
             //如果點擊數=3
             if (m_iWidth == iPoint) {
-                drawLine(m_iLineArray); //畫線
+                drawLine(iLineArray); //畫線
                 m_iLine++; //連線數+1
             }
         }
@@ -424,18 +466,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void drawLine(int iDwLine[]) {
-        int[] iStart = new int[m_iWidth-1];
-        int[] iEnd = new int[m_iWidth-1];
+        int[] iStart = new int[2];
+        int[] iEnd = new int[2];
         //取得起始和終止物件的座標
         tvNumArray[iDwLine[0]].getLocationOnScreen(iStart);
         tvNumArray[iDwLine[m_iWidth-1]].getLocationOnScreen(iEnd);
         //計算座標
-        int iStrartX = iStart[0] + (tvNumArray[iDwLine[0]].getWidth() / 2);
-        int iStrartY = iStart[1] + (tvNumArray[iDwLine[0]].getHeight() / 2);
-        int iEndX = iEnd[0] + (tvNumArray[iDwLine[m_iWidth-1]].getWidth() / 2);
-        int iEndY = iEnd[1] + (tvNumArray[iDwLine[m_iWidth-1]].getHeight() / 2);
+        int iStartX = iStart[0] + (tvNumArray[0].getWidth() / 2);
+        int iStartY = iStart[1] + (tvNumArray[0].getHeight() / 2);
+        int iEndX = iEnd[0] + (tvNumArray[0].getWidth() / 2);
+        int iEndY = iEnd[1] + (tvNumArray[0].getHeight() / 2);
+
+
         //畫線
-        cCanvas.drawLine(iStrartX, iStrartY, iEndX, iEndY, pPaint);
+        cCanvas.drawLine(iStartX, iStartY, iEndX, iEndY, pPaint);
         ivCanvas.setImageBitmap(bmBitmap);
     }
 

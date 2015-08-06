@@ -1,0 +1,33 @@
+<resources>
+     <string name = "app_name"> Bingo </string>
+        <string name = "bingoRange_title"> Bingo Set</string>
+        <string name = "bingoRange_min"> minimum </string>
+        <string name = "bingoRange_max"> maximum </string>
+        <string name = "bingoNum_title"> input range digital </string>
+        <string name = "bingoNum_hint"> digital </string>
+        <string name = "bingoWinLine_hint"> Win condition </string>
+        <string name = "bingoWidth_hint"> width(eg 3x3 please enter 3) </string>
+        <string name = "bingoWin_title"> BINGO </string>
+        <string name = "bingoWin_text"> You Win </string>
+        <string name = "bingoLoad_title"> existing log file </string>
+        <string name = "bingoLoad_text"> Whether to continue </string>
+        <string name = "bingoLoad_Yes"> continue </string>
+        <string name = "bingoLoad_No"> restart </string>
+
+        <string name = "dialogToast_Null"> Please enter a value range and the winning conditions </string>
+        <string name = "dialogToast_Error"> the minimum and maximum input error </string>
+        <string name = "dialogToast_lengthError"> range minimum is 1, and the number must exceed </string>
+        <string name = "dialogToast_EditNumError"> numerical range shall be </string>
+        <string name = "dialogToast_EditNumComp"> has the same number </string>
+        <string name = "dialogToast_NumNull"> Please enter the number </string>
+        <string name = "dialogToast_WinLine"> mode the connections number is 1~</string>
+        <string name="dialogToast_Width"> Minimum width of 2 </string>
+
+        <string name = "enter"> OK </string>
+        <string name = "cancel"> Cancel </string>
+
+        <string name = "nowRange"> Bingo range: </string>
+        <string name = "current"> Current: </string>
+        <string name = "aims"> Target: </string>
+        <string name = "nowLine"> Line </string>
+</resources>

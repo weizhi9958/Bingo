@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Bingo</string>
 
-    <string name="bingoRange_title">賓果數字範圍及獲勝條件</string>
+    <string name="bingoRange_title">賓果盤設置</string>
     <string name="bingoRange_min">最小值</string>
     <string name="bingoRange_max">最大值</string>
     <string name="bingoNum_title">輸入範圍內數字</string>
@@ -10,15 +10,19 @@
     <string name="bingoWidth_hint">寬度(如 3x3 請輸入 3)</string>
     <string name="bingoWin_title">BINGO</string>
     <string name="bingoWin_text">You Win</string>
-
+    <string name="bingoLoad_title">已有記錄檔</string>
+    <string name="bingoLoad_text">是否繼續</string>
+    <string name="bingoLoad_Yes">繼續遊戲</string>
+    <string name="bingoLoad_No">重新開始</string>
 
     <string name="dialogToast_Null">請輸入數值範圍及獲勝條件</string>
     <string name="dialogToast_Error">最小值及最大值輸入錯誤</string>
-    <string name="dialogToast_lengthError">範圍數量必須超過 </string>
+    <string name="dialogToast_lengthError">範圍最小值為 1, 且數量必須超過 </string>
     <string name="dialogToast_EditNumError">數值範圍須 </string>
     <string name="dialogToast_EditNumComp">已有相同數字</string>
     <string name="dialogToast_NumNull">請輸入數字</string>
-    <string name="dialogToast_WinLine">模式最大連線數為</string>
+    <string name="dialogToast_WinLine">模式最大連線數為1~</string>
+    <string name="dialogToast_Width">寬度最小值為2</string>
 
     <string name="enter">確定</string>
     <string name="cancel">取消</string>
