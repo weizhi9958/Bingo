@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -65,7 +66,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     SAlertDialog saDialog;
     View viewDialog;
 
-    TableLayout tbLayout;
+    LinearLayout linLayout;
     GridView gvBingoMain;
 
     TextView tvNowRange;
@@ -169,7 +170,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ivRangeEdit = (ImageView) findViewById(R.id.ivRangeEdit);
         ivMode      = (ImageView) findViewById(R.id.ivMode);
         ivCanvas    = (ImageView) findViewById(R.id.ivCanves);
-        tbLayout    = (TableLayout) findViewById(R.id.tbLayout);
+        linLayout    = (LinearLayout) findViewById(R.id.linLayout);
         gvBingoMain = (GridView) findViewById(R.id.gvBingoMain);
 
         ivRandom.setOnClickListener(this);
@@ -204,13 +205,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         tvNumArray = new TextView[m_iWidth * m_iWidth];
         int iCount = 0;
 
-        tbLayout.removeAllViews();
+        linLayout.removeAllViews();
 
-        TableRow.LayoutParams view_layout = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams view_layout = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                1.0f);
         view_layout.setMargins(10, 10, 10, 10);
 
         for(int i = 0; i < m_iWidth; i++){
-            TableRow tbRow = new TableRow(MainActivity.this);
+            LinearLayout lanRow = new LinearLayout(MainActivity.this);
+            lanRow.setOrientation(LinearLayout.HORIZONTAL);
             for(int j = 0; j < m_iWidth; j++){
                 tvNumArray[iCount] = null;
                 tvNumArray[iCount] = new TextView(MainActivity.this);
@@ -222,11 +227,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 tvNumArray[iCount].setText("0");
                 tvNumArray[iCount].setOnClickListener(new SBingoTvListener());
                 tvNumArray[iCount].setLayoutParams(view_layout);
-                tbRow.addView(tvNumArray[iCount]);
+                lanRow.addView(tvNumArray[iCount]);
                 m_bIsLine[iCount] = false;
                 iCount++;
             }
-            tbLayout.addView(tbRow);
+            linLayout.addView(lanRow);
         }
 
         //設定每個TextView的高度等於寬度
