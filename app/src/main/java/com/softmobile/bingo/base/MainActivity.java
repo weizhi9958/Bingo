@@ -39,6 +39,7 @@ import java.util.HashMap;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
+    //偏好設定所需TAG
     private static final String TAG_BINGO = "bingo";
     private static final String TAG_MIN = "min";
     private static final String TAG_MAX = "max";
@@ -100,13 +101,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         initView();
 
+        //取得篇好設定
         settings = getSharedPreferences(TAG_BINGO, 0);
         if(0 == settings.getInt(TAG_MIN, 0)){
             viewDialog = View.inflate(MainActivity.this, R.layout.dialog_range, null);
-            saDialog.showSettingDialog(viewDialog);
+            saDialog.showSettingDialog(viewDialog); //顯示設定彈跳視窗
         } else {
             viewDialog = View.inflate(MainActivity.this, R.layout.dialog_load, null);
-            saDialog.showLoadDialog(viewDialog);
+            saDialog.showLoadDialog(viewDialog); //顯示讀取視窗
         }
 
 
@@ -120,6 +122,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             settings = getSharedPreferences(TAG_BINGO, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.clear();
+
             editor.putInt(TAG_MIN, m_iRangeMin)
                     .putInt(TAG_MAX, m_iRangeMax)
                     .putInt(TAG_WIDTH, m_iWidth)
@@ -139,7 +142,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -148,7 +150,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 saDialog.showSettingDialog(viewDialog);
                 break;
             case R.id.ivRandom:
-                SRandom rnd = new SRandom(m_iRangeMin, m_iRangeMax); //new個SRandom物件並帶入最大及最小值
+                SRandom rnd = new SRandom(m_iRangeMin, m_iRangeMax); //new SRandom物件並帶入最大及最小值
                 int[] iArray = rnd.getRandom(m_iWidth * m_iWidth); //呼叫getRandom方法帶入最大長度取得回傳陣列
                 for(int i = 0; i < iArray.length; i++){
                     tvNumArray[i].setText(Integer.toString(iArray[i]));
@@ -258,6 +260,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     public void loadSetting(){
+        //讀取相關資料
         m_iRangeMin   = settings.getInt(TAG_MIN, 0);
         m_iRangeMax   = settings.getInt(TAG_MAX, 0);
         m_iWidth      = settings.getInt(TAG_WIDTH, 0);
@@ -276,13 +279,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         for(int i = 0; i < tvNumArray.length; i++){
             tvNumArray[i].setText(settings.getString(TAG_GRID + i, null));
             m_bIsLine[i] = settings.getBoolean(TAG_GRIDLINE + i, false);
-
-            Log.d(Integer.toString(i),String.valueOf(m_bIsLine[i]));
         }
 
         censorAllTvEdit();
+        //如果目前為遊戲模式
         if(true == m_bIsPlay) {
-            changeMode(!m_bIsPlay);
+            changeMode(!m_bIsPlay);  //切換為遊戲模式
 
             hdHandler=new Handler();
             raRun=new Runnable() {

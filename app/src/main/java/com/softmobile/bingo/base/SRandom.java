@@ -4,7 +4,9 @@ package com.softmobile.bingo.base;
 import java.util.ArrayList;
 
 public class SRandom {
+
     static ArrayList s_alAllRange;
+
     public SRandom(int iMin, int iMax){
         s_alAllRange = new ArrayList();
 

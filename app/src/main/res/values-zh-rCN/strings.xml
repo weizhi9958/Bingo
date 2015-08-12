@@ -10,7 +10,7 @@
         <string name="bingoWidth_hint">宽度(如 3x3 请输入 3)</string>
         <string name="bingoWin_title">BINGO</string>
         <string name="bingoWin_text">You Win</string>
-        <string name="bingoLoad_title">已有记录档</string>
+        <string name="bingoLoad_title">暂停中</string>
         <string name="bingoLoad_text">是否继续</string>
         <string name="bingoLoad_Yes">继续游戏</string>
         <string name="bingoLoad_No">重新开始</string>

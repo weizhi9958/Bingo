@@ -20,7 +20,7 @@ public class SAlertDialog extends AlertDialog {
     public SAlertDialog(Context context) {
         super(context);
         maActivity = (MainActivity) context;
-        adDialogOld = new AlertDialog.Builder(context);
+        adDialogOld = new AlertDialog.Builder(maActivity);
     }
 
     public void showLoadDialog(final View viewLayout){

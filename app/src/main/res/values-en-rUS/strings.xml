@@ -9,7 +9,7 @@
         <string name = "bingoWidth_hint"> width(eg 3x3 please enter 3) </string>
         <string name = "bingoWin_title"> BINGO </string>
         <string name = "bingoWin_text"> You Win </string>
-        <string name = "bingoLoad_title"> existing log file </string>
+        <string name = "bingoLoad_title"> Pausing </string>
         <string name = "bingoLoad_text"> Whether to continue </string>
         <string name = "bingoLoad_Yes"> continue </string>
         <string name = "bingoLoad_No"> restart </string>
